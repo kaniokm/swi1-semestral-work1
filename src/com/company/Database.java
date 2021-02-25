@@ -16,6 +16,7 @@ public class Database{
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e){
             e.printStackTrace();
+
         }
 
         try{
