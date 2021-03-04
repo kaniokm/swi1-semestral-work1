@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaFxSample.Controller">
+   <children>
+      <TreeTableView layoutX="14.0" layoutY="22.0" prefHeight="200.0" prefWidth="572.0">
+        <columns>
+          <TreeTableColumn prefWidth="75.0" text="Jmeno" />
+          <TreeTableColumn prefWidth="75.0" text="Prijmeni" />
+            <TreeTableColumn prefWidth="75.0" text="Rodne Csilo" />
+            <TreeTableColumn prefWidth="75.0" text="Telefon" />
+            <TreeTableColumn prefWidth="75.0" text="Email" />
+            <TreeTableColumn prefWidth="75.0" text="SPZ" />
+            <TreeTableColumn prefWidth="93.0" text="Cas rezervace" />
+        </columns>
+      </TreeTableView>
+   </children>
+</AnchorPane>
