@@ -17,13 +17,14 @@ import java.util.ResourceBundle;
 
 public class DbController implements Initializable {
     @FXML private javafx.scene.control.TableView<DatabaseData> tableView;
+    @FXML private TableColumn<DatabaseData,Integer> colId;
     @FXML private TableColumn<DatabaseData,String> colName;
     @FXML private TableColumn<DatabaseData,String> colSurname;
     @FXML private TableColumn<DatabaseData,String> colPersonIdNumber;
     @FXML private TableColumn<DatabaseData,String> colPhone;
     @FXML private TableColumn<DatabaseData,String> colEmail;
-    @FXML private TableColumn<DatabaseData,String> colElateNumber;
-    @FXML private TableColumn<DatabaseData, Timestamp> colReservationTime;
+    @FXML private TableColumn<DatabaseData,String> colPlateNumber;
+    @FXML private TableColumn<DatabaseData, Timestamp> colReservationDateTime;
     @FXML private TableColumn<DatabaseData,String> colNote;
 
     @FXML private Button btnCreate;
@@ -40,6 +41,7 @@ public class DbController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ShowData();
     }
+
 
     public ObservableList<DatabaseData> getDataList(){
         ObservableList<DatabaseData> reservationList = FXCollections.observableArrayList();
@@ -61,7 +63,10 @@ public class DbController implements Initializable {
                 System.out.println(first_name);
                 System.out.println(last_name);
                // data = new DatabaseData(first_name, last_name);
-                data = new DatabaseData(rs.getString("first_name"), rs.getString("last_name"),rs.getString("person_id_number"),rs.getString("phone"),rs.getString("email"));
+                //                                                 (int id, String name, String surname, String personIdNumber, String phone,                                                                                                                   String email, String plateNumber, Timestamp reservationTime, Timestamp createdTime, String note)
+                data = new DatabaseData(rs.getInt("id"),rs.getString("first_name"), rs.getString("last_name"),rs.getString("person_id_number"),rs.getString("phone"),rs.getString("email"),rs.getString("plate_number"),rs.getTimestamp("reservated_time"),rs.getTimestamp("created_at"),rs.getString("note"));
+              //  data = new DatabaseData(rs.getInt("id"),rs.getString("first_name"), rs.getString("last_name"),rs.getString("person_id_number"),rs.getString("phone"),rs.getString("email"),rs.getString("plate_number"),rs.getString("note"));
+                //data = new DatabaseData(rs.getInt("id"),rs.getString("first_name"), rs.getString("last_name"));
                 reservationList.add(data);
             }
 
@@ -73,11 +78,16 @@ public class DbController implements Initializable {
     }
     public void ShowData(){
         ObservableList<DatabaseData> list = getDataList();
+        colId.setCellValueFactory(new PropertyValueFactory<DatabaseData, Integer>("id"));
         colName.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("name"));
         colSurname.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("surname"));
         colPersonIdNumber.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("personIdNumber"));
         colPhone.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("phone"));
         colEmail.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("email"));
+        colPlateNumber.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("plateNumber"));
+        colReservationDateTime.setCellValueFactory(new PropertyValueFactory<DatabaseData, Timestamp>("reservationTime"));
+        colNote.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("note"));
+
         tableView.setItems(list);
     }
 }

@@ -12,9 +12,10 @@ public class DatabaseData{
     private String email;
     private String plateNumber;
     private Timestamp reservationTime;
+    private Timestamp createdTime;
     private String note;
 
-    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber, Timestamp reservationTime, String note) {
+    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber, Timestamp reservationTime, Timestamp createdTime, String note) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -23,9 +24,28 @@ public class DatabaseData{
         this.email = email;
         this.plateNumber = plateNumber;
         this.reservationTime = reservationTime;
+        this.createdTime = reservationTime;
         this.note = note;
 
     }
+
+    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber, String note) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.personIdNumber = personIdNumber;
+        this.phone = phone;
+        this.email = email;
+        this.plateNumber = plateNumber;
+        this.note = note;
+    }
+
+    public DatabaseData(int id, String name, String surname) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+    }
+
 
     public DatabaseData() {
     }
