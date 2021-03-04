@@ -19,7 +19,7 @@ public class Main extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("guiJavaFx/DbWindow.fxml"));
         primaryStage.setTitle("Database");
-        primaryStage.setScene(new Scene(root, 700, 500));
+        primaryStage.setScene(new Scene(root, 1200, 500));
         primaryStage.show();
 
 
