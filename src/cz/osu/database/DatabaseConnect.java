@@ -1,12 +1,12 @@
-package com.company;
+package cz.osu.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class Database{
+public class DatabaseConnect {
 
-    private  Database() {
+    private DatabaseConnect() {
 
     }
 
