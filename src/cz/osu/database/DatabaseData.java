@@ -1,5 +1,6 @@
 package cz.osu.database;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 
 
@@ -11,11 +12,12 @@ public class DatabaseData{
     private String phone;
     private String email;
     private String plateNumber;
-    private Timestamp reservationTime;
-    private Timestamp createdTime;
+    private Timestamp reservationDate;
+    private Time reservationTime;
+    private Timestamp createdTime; //delete?
     private String note;
 
-    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber, Timestamp reservationTime, Timestamp createdTime, String note) {
+    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber, Timestamp reservationDate, Time reservationTime, Timestamp createdTime, String note) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -23,39 +25,10 @@ public class DatabaseData{
         this.phone = phone;
         this.email = email;
         this.plateNumber = plateNumber;
+        this.reservationDate = reservationDate;
         this.reservationTime = reservationTime;
-        this.createdTime = reservationTime;
+        //this.createdTime = reservationTime;
         this.note = note;
-
-    }
-
-    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber, String note) {
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.personIdNumber = personIdNumber;
-        this.phone = phone;
-        this.email = email;
-        this.plateNumber = plateNumber;
-        this.note = note;
-    }
-
-    public DatabaseData(int id, String name, String surname) {
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-    }
-
-
-    public DatabaseData() {
-    }
-
-    public DatabaseData(String name, String surname, String personIdNumber, String phone, String email) {
-        this.name = name;
-        this.surname = surname;
-        this.personIdNumber = personIdNumber;
-        this.phone = phone;
-        this.email = email;
     }
 
     public DatabaseData(String name, String surname) {
@@ -119,12 +92,29 @@ public class DatabaseData{
         this.plateNumber = plateNumber;
     }
 
-    public Timestamp getReservationTime() {
+
+    public Timestamp getReservationDate() {
+        return reservationDate;
+    }
+
+    public void setReservationDate(Timestamp reservationDate) {
+        this.reservationDate = reservationDate;
+    }
+
+    public Time getReservationTime() {
         return reservationTime;
     }
 
-    public void setReservationTime(Timestamp reservationTime) {
+    public void setReservationTime(Time reservationTime) {
         this.reservationTime = reservationTime;
+    }
+
+    public Timestamp getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Timestamp createdTime) {
+        this.createdTime = createdTime;
     }
 
     public String getNote() {
