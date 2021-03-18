@@ -4,7 +4,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 
 
-public class DatabaseData{
+public class DatabaseData {
     private int id;
     private String name;
     private String surname;
@@ -16,8 +16,10 @@ public class DatabaseData{
     private Time reservationTime;
     private Timestamp createdTime; //delete?
     private String note;
+    //private boolean isNationalityCz;
+    private String nationality;
 
-    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber, Timestamp reservationDate, Time reservationTime, Timestamp createdTime, String note) {
+    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber, Timestamp reservationDate, Time reservationTime, Timestamp createdTime, String note, String nationality) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -29,11 +31,8 @@ public class DatabaseData{
         this.reservationTime = reservationTime;
         //this.createdTime = reservationTime;
         this.note = note;
-    }
-
-    public DatabaseData(String name, String surname) {
-        this.name = name;
-        this.surname = surname;
+        //this.isNationalityCz = nationality;
+        this.nationality = nationality;
     }
 
     public int getId() {
@@ -123,6 +122,14 @@ public class DatabaseData{
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 }
 
