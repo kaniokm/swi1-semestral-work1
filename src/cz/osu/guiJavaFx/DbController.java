@@ -2,7 +2,6 @@ package cz.osu.guiJavaFx;
 
 import cz.osu.database.DatabaseConnect;
 import cz.osu.database.DatabaseData;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -67,63 +66,21 @@ public class DbController implements Initializable {
     public LocalDate getSelectedDate() {
         return selectedDate;
     }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         selectedDate = LocalDate.now();
-        showData();
-    }
-
-    public ObservableList<DatabaseData> getDataList() {
-        ObservableList<DatabaseData> reservationList = FXCollections.observableArrayList();
-        Connection conn = DatabaseConnect.getDBConnection();
-        String query = "SELECT * FROM reservation_table WHERE reservation_date = '" + selectedDate + "' ORDER BY reservation_time";
-        Statement st;
-        ResultSet rs;
-
-        try {
-            st = conn.createStatement();
-            rs = st.executeQuery(query);
-
-            DatabaseData data;
-
-            while (rs.next()) {
-                data = new DatabaseData(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("person_id_number"), rs.getString("phone"), rs.getString("email"), rs.getString("plate_number"), rs.getTimestamp("reservation_date"), rs.getTime("reservation_time"), rs.getTimestamp("created_at"), rs.getString("note"), rs.getString("nationality"));
-                reservationList.add(data);
-                //System.out.println(rs.getString("reservation_time"));
-            }
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            System.out.println("error here");
-        }
-        return reservationList;
-    }
-
-    public void showData() {
-        ObservableList<DatabaseData> list = getDataList();
-        colId.setCellValueFactory(new PropertyValueFactory<DatabaseData, Integer>("id"));
-        colName.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("name"));
-        colSurname.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("surname"));
-        colPersonIdNumber.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("personIdNumber"));
-        colPhone.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("phone"));
-        colEmail.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("email"));
-        colPlateNumber.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("plateNumber"));
-        colReservationTime.setCellValueFactory(new PropertyValueFactory<DatabaseData, Time>("reservationTime"));
-        colNote.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("note"));
-        colNationality.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("nationality"));
-
         datePicker.setValue(selectedDate);
-
-        tableView.setItems(list);
+        refresh();
     }
 
     public void createNewReservation(javafx.event.ActionEvent actionEvent) throws IOException {
 
         try {
-            FXMLLoader fxmloader = new FXMLLoader(getClass().getResource("CreateReservationWindow.fxml"));
-            Parent root = (Parent) fxmloader.load();
+            FXMLLoader fxmLoader = new FXMLLoader(getClass().getResource("CreateReservationWindow.fxml"));
+            Parent root = (Parent) fxmLoader.load();
             Stage stage = new Stage();
-            stage.setTitle("Nová rezervace na den: "+selectedDate);
+            stage.setTitle("Nová rezervace na den: " + selectedDate);
             stage.setScene(new Scene(root, 600, 500));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(((Node) actionEvent.getSource()).getScene().getWindow());
@@ -142,8 +99,8 @@ public class DbController implements Initializable {
         try {
             selectedId = tableView.getSelectionModel().getSelectedItem().getId();
 
-            FXMLLoader fxmloader = new FXMLLoader(getClass().getResource("EditReservationWindow.fxml"));
-            Parent root = (Parent) fxmloader.load();
+            FXMLLoader fxmLoader = new FXMLLoader(getClass().getResource("EditReservationWindow.fxml"));
+            Parent root = (Parent) fxmLoader.load();
             Stage stage = new Stage();
             stage.setTitle("Edit Reservation");
             stage.setScene(new Scene(root, 600, 500));
@@ -157,43 +114,53 @@ public class DbController implements Initializable {
             System.out.println("unable to open new window or edit");
             e.printStackTrace();
         }
-
     }
 
     public void deleteSelectedReservation(javafx.event.ActionEvent actionEvent) throws Exception {
-     try {
-            int s = tableView.getSelectionModel().getSelectedItem().getId();
-
+        int id;
+        try {
+            id = tableView.getSelectionModel().getSelectedItem().getId();
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Potvrzení smazání.");
             alert.setHeaderText(null);
             alert.setContentText("Opravdu chcete smazat vybrané pole?");
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
-                tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
+            if (result.get() == ButtonType.OK) {
 
-                Connection conn = DatabaseConnect.getDBConnection();
-                String query = "DELETE FROM reservation_table WHERE id = " + s;
-                Statement st;
-                try {
-                    st = conn.createStatement();
-                    st.executeUpdate(query);
-
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                    System.out.println("unable to delete");
-                }
+                String query = "DELETE FROM reservation_table WHERE id = " + id;
+                DatabaseConnect.deleteRecordInDatabase(query);
+                //tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
+                refresh();
             }
-        }catch (Exception e){
-         System.out.println("nothing selected");
-     }
+        } catch (Exception e) {
+            System.out.println("nothing selected");
+        }
     }
 
 
     public void refresh() {
-        selectedDate = datePicker.getValue();
-        //getDataList();
-        showData();
+
+        String query = "SELECT * FROM reservation_table WHERE reservation_date = '" + selectedDate + "' ORDER BY reservation_time";
+        ObservableList<DatabaseData> reservationList = DatabaseConnect.getDatabaseDataListForSelectedDay(query);
+        showData(reservationList);
+    }
+
+    public void showData(ObservableList<DatabaseData> reservationList) {
+
+        colId.setCellValueFactory(new PropertyValueFactory<DatabaseData, Integer>("id"));
+        colName.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("name"));
+        colSurname.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("surname"));
+        colPersonIdNumber.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("personIdNumber"));
+        colPhone.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("phone"));
+        colEmail.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("email"));
+        colPlateNumber.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("plateNumber"));
+        colReservationTime.setCellValueFactory(new PropertyValueFactory<DatabaseData, Time>("reservationTime"));
+        colNote.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("note"));
+        colNationality.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("nationality"));
+
+        datePicker.setValue(selectedDate);
+
+        tableView.setItems(reservationList);
     }
 
     public void showPreviousDate(ActionEvent actionEvent) {
@@ -209,7 +176,8 @@ public class DbController implements Initializable {
     }
 
     public void setToday(ActionEvent actionEvent) {
-        datePicker.setValue(LocalDate.now());
+        selectedDate = LocalDate.now();
+        datePicker.setValue(selectedDate);
         refresh();
     }
 }
