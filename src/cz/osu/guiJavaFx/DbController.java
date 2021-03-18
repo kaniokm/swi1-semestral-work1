@@ -2,11 +2,8 @@ package cz.osu.guiJavaFx;
 
 import cz.osu.database.DatabaseConnect;
 import cz.osu.database.DatabaseData;
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,8 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -75,7 +70,7 @@ public class DbController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         selectedDate = LocalDate.now();
-        ShowData();
+        showData();
     }
 
     public ObservableList<DatabaseData> getDataList() {
@@ -104,7 +99,7 @@ public class DbController implements Initializable {
         return reservationList;
     }
 
-    public void ShowData() {
+    public void showData() {
         ObservableList<DatabaseData> list = getDataList();
         colId.setCellValueFactory(new PropertyValueFactory<DatabaseData, Integer>("id"));
         colName.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("name"));
@@ -128,14 +123,17 @@ public class DbController implements Initializable {
             FXMLLoader fxmloader = new FXMLLoader(getClass().getResource("CreateReservationWindow.fxml"));
             Parent root = (Parent) fxmloader.load();
             Stage stage = new Stage();
-            stage.setTitle("My New Stage Title");
+            stage.setTitle("Nová rezervace na den: "+selectedDate);
             stage.setScene(new Scene(root, 600, 500));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(((Node) actionEvent.getSource()).getScene().getWindow());
 
+            stage.showAndWait();
+            refresh();
+
         } catch (IOException e) {
-            e.printStackTrace();
             System.out.println("unable to open new window");
+            e.printStackTrace();
         }
     }
 
@@ -156,8 +154,8 @@ public class DbController implements Initializable {
             refresh();
 
         } catch (Exception e) {
-            //e.printStackTrace();
             System.out.println("unable to open new window or edit");
+            e.printStackTrace();
         }
 
     }
@@ -194,8 +192,8 @@ public class DbController implements Initializable {
 
     public void refresh() {
         selectedDate = datePicker.getValue();
-        getDataList();
-        ShowData();
+        //getDataList();
+        showData();
     }
 
     public void showPreviousDate(ActionEvent actionEvent) {

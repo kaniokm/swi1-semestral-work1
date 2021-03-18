@@ -60,7 +60,7 @@ public class EditReservationController implements Initializable {
         Statement st;
         ResultSet rs;
         listedTimes = FXCollections.observableArrayList();
-        
+
         try {
             st = conn.createStatement();
             rs = st.executeQuery(query);
@@ -100,13 +100,9 @@ public class EditReservationController implements Initializable {
             rdCz.setSelected(true);
         else rdOther.setSelected(true);
 
-
         showListOfAvailibeTimes = defaultListOfTimes;
         showListOfAvailibeTimes.removeAll(listedTimes);
         comBoxReservedTime.setItems(showListOfAvailibeTimes);
-
-
-
     }
 
     public DatabaseData getDataList() {
