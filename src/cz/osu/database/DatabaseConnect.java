@@ -1,13 +1,19 @@
 package cz.osu.database;
 
 import cz.osu.guiJavaFx.DbController;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.time.LocalTime;
+import java.util.Properties;
 
 public class DatabaseConnect {
 
@@ -19,11 +25,26 @@ public class DatabaseConnect {
             e.printStackTrace();
         }
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/7swi1", "7swi1_user", "TajneHeslo123");
-        } catch (SQLException throwable) {
+            Properties properties= getProperty();
+            connection = DriverManager.getConnection(properties.getProperty("url"), properties.getProperty("user"),  properties.getProperty("password"));
+        } catch (SQLException | IOException throwable) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Nepodařilo se připojit k databázi!!");
+            alert.showAndWait();
             throwable.printStackTrace();
         }
         return connection;
+    }
+
+    public static Properties getProperty() throws IOException {
+        String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+        String configPath = rootPath + "settings.properties";
+        Properties propertySettings = new Properties();
+        propertySettings.load(new FileInputStream(configPath));
+
+        return propertySettings;
     }
 
     public static ObservableList<DatabaseData> getDatabaseDataListForSelectedDay(String query) {
