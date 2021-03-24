@@ -75,34 +75,21 @@ public class DbController implements Initializable {
     }
 
     public void createNewReservation(javafx.event.ActionEvent actionEvent) throws IOException {
-
-        try {
-            FXMLLoader fxmLoader = new FXMLLoader(getClass().getResource("CreateReservationWindow.fxml"));
-            Parent root = (Parent) fxmLoader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Nová rezervace na den: " + selectedDate);
-            stage.setScene(new Scene(root, 600, 500));
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(((Node) actionEvent.getSource()).getScene().getWindow());
-
-            stage.showAndWait();
-            refresh();
-
-        } catch (IOException e) {
-            System.out.println("unable to open new window");
-            e.printStackTrace();
-        }
+        createNewWindow(actionEvent,"CreateReservationWindow.fxml","Nová rezervace na den: " + selectedDate);
     }
 
     public void editSelectedReservation(javafx.event.ActionEvent actionEvent) {
+        createNewWindow(actionEvent,"EditReservationWindow.fxml","Edit Reservation");
+    }
 
+    private void createNewWindow(javafx.event.ActionEvent actionEvent, String window,String title){
         try {
             selectedId = tableView.getSelectionModel().getSelectedItem().getId();
 
-            FXMLLoader fxmLoader = new FXMLLoader(getClass().getResource("EditReservationWindow.fxml"));
+            FXMLLoader fxmLoader = new FXMLLoader(getClass().getResource(window));
             Parent root = (Parent) fxmLoader.load();
             Stage stage = new Stage();
-            stage.setTitle("Edit Reservation");
+            stage.setTitle(title);
             stage.setScene(new Scene(root, 600, 500));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(((Node) actionEvent.getSource()).getScene().getWindow());
@@ -126,7 +113,6 @@ public class DbController implements Initializable {
             alert.setContentText("Opravdu chcete smazat vybrané pole?");
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-
                 String query = "DELETE FROM reservation_table WHERE id = " + id;
                 DatabaseConnect.deleteRecordInDatabase(query);
                 //tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
@@ -136,7 +122,6 @@ public class DbController implements Initializable {
             System.out.println("nothing selected");
         }
     }
-
 
     public void refresh() {
 

@@ -38,7 +38,7 @@ public class DatabaseConnect {
         return connection;
     }
 
-    public static Properties getProperty() throws IOException {
+    private static Properties getProperty() throws IOException {
         String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
         String configPath = rootPath + "settings.properties";
         Properties propertySettings = new Properties();
