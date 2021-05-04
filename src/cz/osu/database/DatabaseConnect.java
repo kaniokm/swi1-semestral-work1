@@ -1,5 +1,14 @@
 package cz.osu.database;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import cz.osu.guiJavaFx.DbController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -7,144 +16,126 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class DatabaseConnect {
 
-    public static Connection getDBConnection() {
-        Connection connection = null;
+
+
+
+    public static String getHTML(String urlToRead) {
+        StringBuilder result = new StringBuilder();
+        URL url = null;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
+            url = new URL(urlToRead);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            try (var reader = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()))) {
+                for (String line; (line = reader.readLine()) != null; ) {
+                    result.append(line);
+                }
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+        return result.toString();}
+
+
+
+    public static ObservableList<DatabaseData> getDatabaseDataListForSelectedDay(LocalDate localDate) {
+
+
+
+
+        ObservableList<DatabaseData> reservationListTest = FXCollections.observableArrayList();
         try {
-            Properties properties= getProperty();
-            connection = DriverManager.getConnection(properties.getProperty("url"), properties.getProperty("user"),  properties.getProperty("password"));
-        } catch (SQLException | IOException throwable) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Nepodařilo se připojit k databázi!!");
-            alert.showAndWait();
-            throwable.printStackTrace();
-        }
-        return connection;
-    }
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
+            List<DatabaseData> data = mapper.readValue(getHTML("http://localhost:8080/reservations/localdate?localDate="+localDate), new TypeReference<List<DatabaseData>>(){});
+            reservationListTest = FXCollections.observableArrayList(data);
 
-    private static Properties getProperty() throws IOException {
-        String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-        String configPath = rootPath + "settings.properties";
-        Properties propertySettings = new Properties();
-        propertySettings.load(new FileInputStream(configPath));
 
-        return propertySettings;
-    }
-
-    public static ObservableList<DatabaseData> getDatabaseDataListForSelectedDay(String query) {
-        Connection conn = DatabaseConnect.getDBConnection();
-        Statement st;
-        ResultSet rs;
-
-        ObservableList<DatabaseData> reservationList = FXCollections.observableArrayList();
-        try {
-            st = conn.createStatement();
-            rs = st.executeQuery(query);
-
-            DatabaseData data;
-
-            while (rs.next()) {
-                data = new DatabaseData(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("person_id_number"), rs.getString("phone"), rs.getString("email"), rs.getString("plate_number"), rs.getTimestamp("reservation_date"), rs.getTime("reservation_time"), rs.getTimestamp("created_at"), rs.getString("note"), rs.getString("nationality"));
-                reservationList.add(data);
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            System.out.println("error here");
-        }
-        return reservationList;
-    }
-
-    public static ObservableList<LocalTime> getListOfReservedTimeForSelectedDay(String query) {
-        Statement st;
-        ResultSet rs;
-        Connection conn = DatabaseConnect.getDBConnection();
-        ObservableList<LocalTime> listedTimes = FXCollections.observableArrayList();
-        try {
-            st = conn.createStatement();
-            rs = st.executeQuery(query);
-
-            while (rs.next()) {
-                listedTimes.add(rs.getTime("reservation_time").toLocalTime());
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-            System.out.println("error when selecting times from db by date");
-        }
-        return listedTimes;
-    }
-
-    public static DatabaseData getSelectedDataByDateAndId() {
-        DatabaseData data;
-        Connection conn = DatabaseConnect.getDBConnection();
-        String query = "SELECT * FROM reservation_table WHERE reservation_date = '" + DbController.selectedDate + "' AND id =" + DbController.selectedId + " ORDER BY reservation_time";
-
-        Statement st;
-        ResultSet rs;
-        try {
-            st = conn.createStatement();
-            rs = st.executeQuery(query);
-
-            while (rs.next()) {
-                data = new DatabaseData(rs.getInt("id"), rs.getString("first_name"), rs.getString("last_name"), rs.getString("person_id_number"), rs.getString("phone"), rs.getString("email"), rs.getString("plate_number"), rs.getTimestamp("reservation_date"), rs.getTime("reservation_time"), rs.getTimestamp("created_at"), rs.getString("note"), rs.getString("nationality"));
-                return data;
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Nepodařilo se načíst data pro editaci");
-            alert.showAndWait();
-        }
-        return null;
-    }
-
-    public static void updateOrCreateRecordInDatabase(String query) {
-        Connection conn = DatabaseConnect.getDBConnection();
-        Statement st;
-
-        try {
-            st = conn.createStatement();
-            st.executeUpdate(query);
-        } catch (SQLException e) {
+        } catch (JsonMappingException e) {
             e.printStackTrace();
-
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Špatně zadaná hodnota !!!o");
-            alert.showAndWait();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
+        return reservationListTest;
     }
 
-    public static void deleteRecordInDatabase(String query) {
-        Connection conn = DatabaseConnect.getDBConnection();
-        Statement st;
+    public static ObservableList<LocalTime> getListOfReservedTimeForSelectedDay(LocalDate localDate) {
+        ObservableList<LocalTime> reservationListTest = FXCollections.observableArrayList();
         try {
-            st = conn.createStatement();
-            st.executeUpdate(query);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
+            List<LocalTime> data = mapper.readValue(getHTML("http://localhost:8080/reservations/localdate/times?localDate="+localDate), new TypeReference<List<LocalTime>>(){});
+            reservationListTest = FXCollections.observableArrayList(data);
 
-        } catch (SQLException throwables) {
-            System.out.println("unable to delete");
-            throwables.printStackTrace();
+
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
+        return reservationListTest;
     }
+
+
+
+    public static DatabaseData getSelectedDataById(int id) {
+
+
+        DatabaseData data = new DatabaseData();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
+            data = mapper.readValue(getHTML("http://localhost:8080/reservations/"+id), DatabaseData.class);
+
+
+
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return data;
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
 }
 

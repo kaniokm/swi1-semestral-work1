@@ -11,6 +11,8 @@ import cz.osu.guiJavaFx.*;
 import java.io.IOException;
 
 
+
+
 public class Main extends Application {
 
     @Override
@@ -24,6 +26,8 @@ public class Main extends Application {
         primaryStage.setOnCloseRequest((event) -> {
             System.out.println("Closing Stage"); // sadly works only when closed via "X" button
         });
+
+
 
 
     }

@@ -11,9 +11,16 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
+
+import static cz.osu.guiJavaFx.DbController.selectedId;
+import static cz.osu.guiJavaFx.DbController.selectedTime;
 
 public class EditReservationController implements Initializable {
     @FXML
@@ -53,16 +60,22 @@ public class EditReservationController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         listedTimes = FXCollections.observableArrayList();
-        String query = "SELECT reservation_time FROM reservation_table WHERE reservation_date = '" + DbController.selectedDate + "' AND id =" + DbController.selectedId + " ORDER BY reservation_time;";
-        ObservableList<LocalTime> currentlySetTime = DatabaseConnect.getListOfReservedTimeForSelectedDay(query);
 
-        query = "SELECT reservation_time FROM reservation_table WHERE reservation_date = '" + DbController.selectedDate + "' ORDER BY reservation_time;";
-        ObservableList<LocalTime> todaysListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(query);
+
+
+
+
+
+
+        ObservableList<LocalTime> todaysListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(DbController.selectedDate);
+
+        System.out.println(todaysListedTimes);
+
 
         listedTimes.addAll(todaysListedTimes);
-        listedTimes.removeAll(currentlySetTime);
+        listedTimes.remove(selectedTime);
 
-        DatabaseData data = DatabaseConnect.getSelectedDataByDateAndId();
+        DatabaseData data = DatabaseConnect.getSelectedDataById(selectedId);
 
         tfName.setText(data.getName());
         tfSurname.setText(data.getSurname());
@@ -77,7 +90,7 @@ public class EditReservationController implements Initializable {
 
         showListOfAvailibeTimes = defaultListOfTimes;
         showListOfAvailibeTimes.removeAll(listedTimes);
-        comBoxReservedTime.setValue(currentlySetTime.get(0));
+        comBoxReservedTime.setValue(selectedTime);
         comBoxReservedTime.setItems(showListOfAvailibeTimes);
     }
 
@@ -90,8 +103,71 @@ public class EditReservationController implements Initializable {
             alert.setContentText("Vyplňte prosím důležitá pole !!!");
             alert.showAndWait();
         } else {
-            String query = "UPDATE reservation_table Set first_name='" + tfName.getText() + "', last_name='" + tfSurname.getText() + "', person_id_number='" + tfPersonIdNumber.getText() + "', phone='" + tfPhone.getText() + "', email='" + tfEmail.getText() + "', plate_number='" + tfPlateNumber.getText() + "', note='" + tfNote.getText() + "', reservation_date='" + DbController.selectedDate + "', reservation_time='" + comBoxReservedTime.getValue() + "', nationality='" + (rdCz.isSelected() ? "cz" : "--") + "' WHERE id=" + DbController.selectedId + " ;";
-            DatabaseConnect.updateOrCreateRecordInDatabase(query);
+            URL url = null;
+            try {
+                url = new URL("http://localhost:8080/reservations/"+ selectedId);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setRequestMethod("PUT");
+
+
+                String json = "{\n" +
+                        "\"reservationDate\": \"" +DbController.selectedDate+"\",\n" +
+                        "\"reservationTime\": \"" +comBoxReservedTime.getValue()+":00"+"\",\n" +
+                        "\"firstName\": \"" +tfName.getText()+"\",\n" +
+                        "\"lastName\": \"" +tfSurname.getText()+"\",\n" +
+                        "\"plateNumber\": \"" +tfPlateNumber.getText()+"\",\n" +
+                        "\"personIdNumber\": \"" +tfPersonIdNumber.getText()+"\",\n" +
+                        "\"phone\": \"" +tfPhone.getText()+"\",\n" +
+                        "\"email\": \"" +tfEmail.getText()+"\",\n" +
+                        "\"note\": \"Ada\",\n" +
+                        "\"nationality\": \"" +(rdCz.isSelected() ? "cz" : "--")+"\"\n" +
+                        "}";
+                System.out.println( json);
+
+
+
+
+
+                con.setConnectTimeout(5000);
+                con.setReadTimeout(5000);
+                con.setDoOutput(true);
+                con.setRequestProperty("Content-Type", "application/json");
+                DataOutputStream out = new DataOutputStream(con.getOutputStream());
+                //out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
+                out.write(json.getBytes());
+                out.flush();
+                out.close();
+
+                int status = con.getResponseCode();
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer content = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    content.append(inputLine);
+                }
+                in.close();
+
+                Reader streamReader = null;
+
+                if (status > 299) {
+                    streamReader = new InputStreamReader(con.getErrorStream());
+                } else {
+                    streamReader = new InputStreamReader(con.getInputStream());
+                }
+
+                con.disconnect();
+
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
 
             Stage stage = (Stage) btnClose.getScene().getWindow();
             stage.close();

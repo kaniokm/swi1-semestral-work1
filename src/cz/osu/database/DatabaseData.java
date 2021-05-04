@@ -1,25 +1,42 @@
 package cz.osu.database;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 
 public class DatabaseData {
-    private int id;
-    private String name;
-    private String surname;
-    private String personIdNumber;
-    private String phone;
-    private String email;
-    private String plateNumber;
-    private Timestamp reservationDate;
-    private Time reservationTime;
-    private Timestamp createdTime; //delete?
-    private String note;
-    //private boolean isNationalityCz;
-    private String nationality;
+     @JsonProperty("id")
+     int id;
+     @JsonProperty("firstName")
+     String name;
+     @JsonProperty("lastName")
+     String surname;
+     @JsonProperty("personIdNumber")
+     String personIdNumber;
+     @JsonProperty("phone")
+     String phone;
+     @JsonProperty("email")
+     String email;
+     @JsonProperty("plateNumber")
+     String plateNumber;
+     @JsonProperty("reservationDate")
+     LocalDate reservationDate;
+     @JsonProperty("reservationTime")
+     LocalTime reservationTime;
 
-    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber, Timestamp reservationDate, Time reservationTime, Timestamp createdTime, String note, String nationality) {
+    String note;
+    //private boolean isNationalityCz;
+     String nationality;
+
+
+    public DatabaseData() {
+    }
+
+    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber, LocalDate reservationDate, LocalTime reservationTime, String note, String nationality) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -29,9 +46,7 @@ public class DatabaseData {
         this.plateNumber = plateNumber;
         this.reservationDate = reservationDate;
         this.reservationTime = reservationTime;
-        //this.createdTime = reservationTime;
         this.note = note;
-        //this.isNationalityCz = nationality;
         this.nationality = nationality;
     }
 
@@ -92,29 +107,23 @@ public class DatabaseData {
     }
 
 
-    public Timestamp getReservationDate() {
+    public LocalDate getReservationDate() {
         return reservationDate;
     }
 
-    public void setReservationDate(Timestamp reservationDate) {
+    public void setReservationDate(LocalDate reservationDate) {
         this.reservationDate = reservationDate;
     }
 
-    public Time getReservationTime() {
+    public LocalTime getReservationTime() {
         return reservationTime;
     }
 
-    public void setReservationTime(Time reservationTime) {
+    public void setReservationTime(LocalTime reservationTime) {
         this.reservationTime = reservationTime;
     }
 
-    public Timestamp getCreatedTime() {
-        return createdTime;
-    }
 
-    public void setCreatedTime(Timestamp createdTime) {
-        this.createdTime = createdTime;
-    }
 
     public String getNote() {
         return note;
@@ -122,6 +131,23 @@ public class DatabaseData {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    @Override
+    public String toString() {
+        return "DatabaseData{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", personIdNumber='" + personIdNumber + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", plateNumber='" + plateNumber + '\'' +
+                ", reservationDate=" + reservationDate +
+                ", reservationTime=" + reservationTime +
+                ", note='" + note + '\'' +
+                ", nationality='" + nationality + '\'' +
+                '}';
     }
 
     public String getNationality() {

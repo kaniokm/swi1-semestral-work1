@@ -2,6 +2,7 @@ package cz.osu.guiJavaFx;
 
 import cz.osu.database.DatabaseConnect;
 import cz.osu.database.DatabaseData;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,10 +15,18 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -61,6 +70,7 @@ public class DbController implements Initializable {
     private DatePicker datePicker;
 
     public static LocalDate selectedDate;
+    public static LocalTime selectedTime;
     public static int selectedId;
 
     public LocalDate getSelectedDate() {
@@ -74,17 +84,26 @@ public class DbController implements Initializable {
         refresh();
     }
 
-    public void createNewReservation(javafx.event.ActionEvent actionEvent) throws IOException {
-        createNewWindow(actionEvent,"CreateReservationWindow.fxml","Nová rezervace na den: " + selectedDate);
+    public void createNewReservation(ActionEvent actionEvent) {
+        createNewWindow(actionEvent,"CreateReservationWindow.fxml","Nová rezervace na den: " );
     }
 
-    public void editSelectedReservation(javafx.event.ActionEvent actionEvent) {
+    public void editSelectedReservation(ActionEvent actionEvent) {
         createNewWindow(actionEvent,"EditReservationWindow.fxml","Edit Reservation");
+
+
     }
 
     private void createNewWindow(javafx.event.ActionEvent actionEvent, String window,String title){
         try {
+            //selectedTime = tableView.getSelectionModel().getSelectedItem().getReservationTime();
             selectedId = tableView.getSelectionModel().getSelectedItem().getId();
+            selectedTime = tableView.getSelectionModel().getSelectedItem().getReservationTime();
+        }
+        catch (Exception ignored){}
+
+        try {
+
 
             FXMLLoader fxmLoader = new FXMLLoader(getClass().getResource(window));
             Parent root = (Parent) fxmLoader.load();
@@ -103,8 +122,12 @@ public class DbController implements Initializable {
         }
     }
 
-    public void deleteSelectedReservation(javafx.event.ActionEvent actionEvent) throws Exception {
+    public void deleteSelectedReservation(javafx.event.ActionEvent actionEvent) {
+
+
+
         int id;
+        URL url;
         try {
             id = tableView.getSelectionModel().getSelectedItem().getId();
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -113,22 +136,73 @@ public class DbController implements Initializable {
             alert.setContentText("Opravdu chcete smazat vybrané pole?");
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                String query = "DELETE FROM reservation_table WHERE id = " + id;
-                DatabaseConnect.deleteRecordInDatabase(query);
-                //tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
-                refresh();
+                try {
+
+                    url = new URL("http://localhost:8080/reservations/"+id);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+                    con.setConnectTimeout(5000);
+                    con.setReadTimeout(5000);
+                    con.setRequestMethod("DELETE");
+
+
+                    int status = con.getResponseCode();
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(con.getInputStream()));
+                    String inputLine;
+                    StringBuffer content = new StringBuffer();
+                    while ((inputLine = in.readLine()) != null) {
+                        content.append(inputLine);
+                    }
+                    in.close();
+
+                    Reader streamReader = null;
+
+                    if (status > 299) {
+                        streamReader = new InputStreamReader(con.getErrorStream());
+                    } else {
+                        streamReader = new InputStreamReader(con.getInputStream());
+                    }
+
+                    con.disconnect();
+                    refresh();
+
+                    //tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (ProtocolException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             System.out.println("nothing selected");
         }
+
+
+
+
+
+
+
     }
+
+
 
     public void refresh() {
 
-        String query = "SELECT * FROM reservation_table WHERE reservation_date = '" + selectedDate + "' ORDER BY reservation_time";
-        ObservableList<DatabaseData> reservationList = DatabaseConnect.getDatabaseDataListForSelectedDay(query);
+
+
+
+
+        ObservableList<DatabaseData> reservationList = DatabaseConnect.getDatabaseDataListForSelectedDay(datePicker.getValue());
         showData(reservationList);
+
     }
+
+
+
 
     public void showData(ObservableList<DatabaseData> reservationList) {
 
@@ -144,6 +218,9 @@ public class DbController implements Initializable {
         colNationality.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("nationality"));
 
         datePicker.setValue(selectedDate);
+
+
+
 
         tableView.setItems(reservationList);
     }
