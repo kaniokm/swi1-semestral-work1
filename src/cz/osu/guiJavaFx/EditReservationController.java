@@ -119,7 +119,7 @@ public class EditReservationController implements Initializable {
                         "\"personIdNumber\": \"" +tfPersonIdNumber.getText()+"\",\n" +
                         "\"phone\": \"" +tfPhone.getText()+"\",\n" +
                         "\"email\": \"" +tfEmail.getText()+"\",\n" +
-                        "\"note\": \"Ada\",\n" +
+                        "\"note\": \"" +tfNote.getText().replaceAll("[\r\n]+", " ")+"\",\n" +
                         "\"nationality\": \"" +(rdCz.isSelected() ? "cz" : "--")+"\"\n" +
                         "}";
                 System.out.println( json);
