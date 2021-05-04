@@ -1,0 +1,212 @@
+/*
+ * Copyright 2015 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.greglturnquist.payroll;
+
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Date;
+
+import javax.persistence.*;
+
+/**
+ * @author Greg Turnquist
+ */
+// tag::code[]
+@Entity // <1>
+
+public class Reservation {
+
+
+	 @Id @GeneratedValue private long id;
+
+	private String firstName;
+
+	private String lastName;
+
+	private String personIdNumber;
+
+	private String phone;
+
+	private String email;
+
+	private String plateNumber;
+
+	private LocalDate reservationDate;
+
+	private LocalTime reservationTime;
+
+	private String note;
+
+	private String nationality;
+
+	public Reservation() {}
+
+	public Reservation( String firstName, String lastName, String personIdNumber, String phone, String email, String plateNumber, LocalDate reservationDate, LocalTime reservationTime, String note, String nationality) {
+
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.personIdNumber = personIdNumber;
+		this.phone = phone;
+		this.email = email;
+		this.plateNumber = plateNumber;
+		this.reservationDate = reservationDate;
+		this.reservationTime = reservationTime;
+		this.note = note;
+		this.nationality = nationality;
+	}
+
+	/*@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Order order = (Order) o;
+		return Objects.equals(id, order.id) &&
+			Objects.equals(name, order.name) &&
+			Objects.equals(surname, order.surname) &&
+			Objects.equals(personIdNumber, order.personIdNumber)&&
+			Objects.equals(phone, order.phone)&&
+			Objects.equals(email, order.email)&&
+			Objects.equals(plateNumber, order.plateNumber)&&
+			Objects.equals(reservationDate, order.reservationDate)&&
+			Objects.equals(reservationTime, order.reservationTime)&&
+			Objects.equals(note, order.note)&&
+			Objects.equals(nationality, order.nationality);
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(id, name, surname, personIdNumber, phone, email, plateNumber, reservationDate, reservationTime, note, nationality);
+	}
+	*/
+
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String name) {
+		this.firstName = name;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String surname) {
+		this.lastName = surname;
+	}
+
+	public String getPersonIdNumber() {
+		return personIdNumber;
+	}
+
+	public void setPersonIdNumber(String personIdNumber) {
+		this.personIdNumber = personIdNumber;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPlateNumber() {
+		return plateNumber;
+	}
+
+	public void setPlateNumber(String plateNumber) {
+		this.plateNumber = plateNumber;
+	}
+
+	public LocalDate getReservationDate() {
+		return reservationDate;
+	}
+
+	public void setReservationDate(LocalDate reservation_date) {
+		this.reservationDate = reservation_date;
+	}
+
+	public LocalTime getReservationTime() {
+		return reservationTime;
+	}
+
+	public void setReservationTime(LocalTime reservation_time) {
+		this.reservationTime = reservation_time;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public String getNationality() {
+		return nationality;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	@Override
+	public String toString() {
+		return "Order{" +
+
+				", name='" + firstName + '\'' +
+				", surname='" + lastName + '\'' +
+				", personIdNumber='" + personIdNumber + '\'' +
+				", phone='" + phone + '\'' +
+				", email='" + email + '\'' +
+				", plateNumber='" + plateNumber + '\'' +
+
+				", note='" + note + '\'' +
+				", nationality='" + nationality + '\'' +
+				'}';
+	}
+
+
+
+
+
+
+
+
+
+}
+// end::code[]
