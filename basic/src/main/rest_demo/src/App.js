@@ -1,9 +1,34 @@
 import React, {useState, Component} from "react";
 import {Button, Card, Col, Container, Form, ListGroup, Row} from "react-bootstrap";
-import Select from 'react-select'
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
+import BaseSelect from 'react-select'
+import DatePicker from "react-datepicker";
+import FixRequiredSelect from "./FixRequiredSelect";
+import validator from 'react-validation';
+import PropTypes from "prop-types";
+
+import Input from 'react-validation/build/input';
+import "react-datepicker/dist/react-datepicker.css";
+import axios from "axios";
+
+
+
+const API='http://localhost:8080/reservations/localdate?localDate=';
+
+const APItimes='http://localhost:8080/reservations/localdate/timesjson?localDate=';
+
+const optionsNationality = [
+    { value: 'cz', label: 'Čech' },
+    { value: '--', label: 'Cizinec' }
+    ]
+
+const Select = props => (
+    <FixRequiredSelect
+        {...props}
+        SelectComponent={BaseSelect}
+
+    />
+);
 
 
 
@@ -21,9 +46,12 @@ class App extends React.Component {
             error: null,
 
 
-            selectedDate: new Date(2021,5,3),
-            selectedDateString: ""+new Date(2021,5,3).toString(),
-            newReservationDate:new Date(2021,3,28),
+
+
+
+
+            newReservationDate:new Date(2021,4,5,20,0,0),
+
             newReservationTime:"",
             newFirstName: "",
             newLastName: "",
@@ -36,15 +64,36 @@ class App extends React.Component {
             reservationId: "",
 
 
-            updateFirstName: "",
-            updateLastName: "",
-            updatePersonIdNumber: "",
-            updatePhone: "",
-            updateEmail: "",
-            updatePlateNumber: "",
-            updateNote: "",
-            updateNationality: "",
+
         };
+    }
+
+
+
+
+
+    componentDidUpdate() {
+        const axios = require('axios').default;
+
+
+
+
+
+        axios.get(APItimes+this.state.newReservationDate.toISOString().split("T")[0])
+            .then((response) => {
+                this.setState({
+                    'dataTimes': response.data,
+
+
+                })
+                //console.log(response.data);
+                //console.log(response.status);
+                //console.log(response.statusText);
+                //console.log(response.headers);
+                //console.log(response.config);
+            });
+
+
     }
 
 
@@ -56,10 +105,12 @@ class App extends React.Component {
 
 
     async componentDidMount() {
+
+
         const axios = require('axios').default;
 
 
-        axios.get('http://localhost:8080/reservations/localdate?localDate=2021-05-03')
+        axios.get(API+this.state.newReservationDate.toISOString().split("T")[0])
             .then((response) => {
                 this.setState({
                     'data': response.data
@@ -70,15 +121,11 @@ class App extends React.Component {
                 //console.log(response.headers);
                 //console.log(response.config);
             });
-    }
 
-   /* async componentDidMountTime() {
-        const axios = require('axios').default;
-
-        axios.get('http://localhost:8080/reservations/localdate/times?localDate='+this.selectedDate)
+        axios.get(APItimes+this.state.newReservationDate.toISOString().split("T")[0])
             .then((response) => {
                 this.setState({
-                    'dataTimes': response.dataTimes
+                    'dataTimes': response.data
                 })
                 //console.log(response.data);
                 //console.log(response.status);
@@ -86,28 +133,31 @@ class App extends React.Component {
                 //console.log(response.headers);
                 //console.log(response.config);
             });
-    }*/
+
+
+    }
+
+
 
 
 
 
 
     onChange = (e, name) => {
+
+
         //console.log("---", e, name)
         this.setState({
             [name]: e
         })
     }
 
-    createSelect = () => { const options = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-    ]
 
-    const MyComponent = () => (
-        <Select options={options} />
-    )}
+
+
+
+
+
 
 
 
@@ -121,7 +171,7 @@ class App extends React.Component {
             method: 'post',
             url: 'http://localhost:8080/reservations',
             data: {
-                "reservationDate":  this.state.newReservationDate,
+                "reservationDate":  this.state.newReservationDate.toISOString(),
                 "reservationTime": this.state.newReservationTime,
                 "firstName": this.state.newFirstName,
                 "lastName": this.state.newLastName,
@@ -167,55 +217,36 @@ class App extends React.Component {
 
     render() {
 
-        const DisplayItems = (data) => {
-            const list = data.children.map(item => <CustomItem key={item.id}>{item}</CustomItem>)
-            return (
-                <ListGroup variant="flush">
-                    {list}
-                </ListGroup>
-            )
-        }
 
-        const CustomItem = (data) => {
-            const item = data.children;
-            return <ListGroup.Item>
-                <Col>
-                    <Row><b> id:</b> {item.id} </Row>
-                    <Row><b> firstName:</b> {item.firstName} </Row>
-                    <Row><b> lastName:</b> {item.lastName} </Row>
-                    <Row><b> plateNumber:</b> {item.plateNumber} </Row>
-                    <Row><b> reservationTime:</b> {item.reservationTime} </Row>
-                    <Row><b> personIdNumber:</b> {item.personIdNumber} </Row>
-                    <Row><b> phone:</b> {item.phone} </Row>
-                    <Row><b> email:</b> {item.email} </Row>
-                    <Row><b> note:</b> {item.note} </Row>
-                    <Row><b> nationality:</b> {item.nationality} </Row>
-                </Col>
-            </ListGroup.Item>;
-        };
+
 
         return (
             <Container>
                 <h1>Web app</h1>
-                <Card>
-                    <DisplayItems>{this.state.data}</DisplayItems>
-                </Card>
+
+
+
 
                 <Card>
-                    <Card.Header>Create</Card.Header>
+                    <Card.Header></Card.Header>
                     <Card.Body>
-                        <Card.Title>Create new reservation</Card.Title>
+                        <Card.Title>Vytvořte novou rezervaci</Card.Title>
                         <Form>
                             <Form.Group controlId="firstNameId">
+                                Zadejte jméno
                                 <Form.Control
+                                    required
                                     type="text"
                                     placeholder="Enter name"
                                     value={this.state.newFirstName}
                                     onChange={(e) => this.onChange(e.target.value, 'newFirstName')}
                                 />
+
                             </Form.Group>
                             <Form.Group controlId="lastNameId">
+                                Zadejte příjmení
                                 <Form.Control
+                                    required
                                     type="text"
                                     placeholder="Enter surname"
                                     value={this.state.newLastName}
@@ -223,17 +254,10 @@ class App extends React.Component {
                                 />
                             </Form.Group>
 
-
-
-
-
-
-
-
-
-
                             <Form.Group controlId="personId">
+                                Zadejte rodné číslo
                                 <Form.Control
+                                    required
                                     type="text"
                                     placeholder="Enter personID"
                                     onChange={(e) => this.onChange(e.target.value, 'newPersonIdNumber')}
@@ -241,15 +265,19 @@ class App extends React.Component {
                                 />
                             </Form.Group>
                             <Form.Group controlId="phoneId">
+                                Zadejte telefon
                                 <Form.Control
+                                    required
                                     type="text"
-                                    placeholder="Enter phoneID"
+                                    placeholder="Enter phone"
                                     onChange={(e) => this.onChange(e.target.value, 'newPhone')}
                                     value={this.state.newPhone}
                                 />
                             </Form.Group>
                             <Form.Group controlId="emailId">
+                                Zadejte email
                                 <Form.Control
+                                    required
                                     type="email"
                                     placeholder="Enter email"
                                     onChange={(e) => this.onChange(e.target.value, 'newEmail')}
@@ -257,14 +285,17 @@ class App extends React.Component {
                                 />
                             </Form.Group>
                             <Form.Group controlId="plateNumberId">
+                                Zadejte registrační značku
                             <Form.Control
+                                required
                                 type="text"
                                 placeholder="Enter plate number"
                                     onChange={(e) => this.onChange(e.target.value, 'newPlateNumber')}
                                     value={this.state.newPlateNumber}
                                 />
                             </Form.Group>
-                            <Form.Group controlId="plateNoteId">
+                            <Form.Group controlId="noteId">
+                                Zadejte popis poruchy
                                 <Form.Control
                                     type="text"
                                     placeholder="Enter note"
@@ -273,51 +304,36 @@ class App extends React.Component {
                                 />
                             </Form.Group>
                             <Form.Group controlId="nationalityId">
-                            <Form.Control
-                                as="select"
-                                custom
-                                onChange={(e) => this.onChange(e.target.value, 'newNationality')}
-                            >
-                                <option value="Zvolte možnost">Zvolte možnost</option>
-                                <option value="cz">Čech</option>
-                                <option value="--">Cizinec</option>
+                                Vyberte národnost
+                                <Select
+                                    required
+                                    name="form-field-name"
+                                    options={optionsNationality}
+                                    onChange={(e) => this.onChange(e.value, 'newNationality')}
+                                />
 
-                            </Form.Control>
                                 </Form.Group>
 
-                            <Form.Group controlId="reservationTimeId">
-
-
-
-                                <Form.Control
-                                    as="select"
-                                    custom
-                                    onChange={(e) => this.onChange(e.target.value, 'newReservationTime')}
-                                >
-                                    <option value="Zvolte možnost">Zvolte možnost</option>
-                                    <option value="11:00:00">11:00:00</option>
-                                    <option value="12:00:00">12:00:00</option>
-                                    <option value="13:00:00">13:00:00</option>
-                                    <option value="14:00:00">14:00:00</option>
-                                    <option value="15:00:00">15:00:00</option>
-
-                                </Form.Control>
-
-                            </Form.Group>
-
                             <Form.Group controlId="reservationDateId">
-
-
+                                Zvolte den rezervace<br/>
                                 <DatePicker
-
-
                                     selected={this.state.newReservationDate}
-                                    onChange={(e) => this.onChange(e, 'newReservationDate')}
-                                    value={this.state.newReservationDate}
-
+                                    onChange={(e) => this.onChange((e), 'newReservationDate')}
                                 />
 
                             </Form.Group>
+
+                            <Form.Group controlId="reservationTimeId" >
+                                Vyberte čas (pokud není čas k vybrání, vyberte jiný den)
+                                <Select
+                                    required
+                                    name="form-field-name"
+                                    options={this.state.dataTimes}
+                                    onChange={(e) => this.onChange(e.value, 'newReservationTime')}
+                                />
+
+                            </Form.Group>
+
                             <Button variant="primary" onClick={this.createNew} type="submit">Create</Button>
                         </Form>
                     </Card.Body>

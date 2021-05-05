@@ -54,12 +54,7 @@ public class ReservationDatabaseLoader implements CommandLineRunner { // <2>
 	public void run(String... strings) throws Exception {
 		log.info("Preloading data");// <4>
 
-		LocalDate ts;
-		ts = LocalDate.now();
-		LocalTime dt;
-		dt = LocalTime.of(12,0);
 
-		this.repository.save(new Reservation("Tom","Novak","1212995647","777777777","email@email.cz","2T74545" ,ts,dt,"svetla","Ceska"));
 
 
 

@@ -2,6 +2,8 @@ package com.greglturnquist.payroll;
 
 
 
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ import java.util.Optional;
 public class ReservationController {
 
     @Autowired
-    ReservationServices reservationServices;
+
     private static final Logger log = LoggerFactory.getLogger(ReservationRepository.class);
 
     private final ReservationRepository repository;
@@ -76,6 +78,7 @@ public class ReservationController {
 
 
         List<Reservation> data = repository.findAllByReservationDate(localDate);
+
         List<LocalTime> ret = new ArrayList<LocalTime>();
         
         for (Reservation r:data
@@ -87,6 +90,89 @@ public class ReservationController {
 
 
         return  ret;
+    }
+/*
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/reservations/localdate/timesjson")
+    JSONArray allTimesByDateJSON(@RequestParam("localDate")
+                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate)
+    {
+
+
+        List<Reservation> data = repository.findAllByReservationDate(localDate);
+
+
+        JSONArray jsonList = new JSONArray();
+
+
+
+
+        for (Reservation r:data
+        ) {
+            JSONObject valuesObject = new JSONObject();
+            valuesObject.put("value",r.getReservationTime());
+            valuesObject.put("label",r.getReservationTime());
+
+            jsonList.add(valuesObject);
+
+        }
+
+
+
+
+        return  jsonList;
+    }
+*/
+
+
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/reservations/localdate/timesjson")
+    JSONArray allTimesByDateJSON(@RequestParam("localDate")
+                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate)
+    {
+
+
+        List<Reservation> data = repository.findAllByReservationDate(localDate);
+
+
+        JSONArray reservedTimes = new JSONArray();
+        JSONArray allTimes = new JSONArray();
+        JSONArray availableTimes = new JSONArray();
+
+        LocalTime time;
+        time = LocalTime.of(7,0,0);
+
+
+        for (int i = 0; i < 10; i++) {
+            JSONObject allValuesObject = new JSONObject();
+            allValuesObject.put("value",time);
+            allValuesObject.put("label",time);
+            allTimes.add(allValuesObject);
+            time=time.plusHours(1);
+        }
+
+
+
+
+        for (Reservation r:data
+        ) {
+            JSONObject valuesObject = new JSONObject();
+            valuesObject.put("value",r.getReservationTime());
+            valuesObject.put("label",r.getReservationTime());
+
+            reservedTimes.add(valuesObject);
+
+        }
+
+
+        availableTimes = allTimes;
+        availableTimes.removeAll(reservedTimes);
+
+
+
+
+        return  availableTimes;
     }
 
 
@@ -108,24 +194,12 @@ public class ReservationController {
         return repository.save(newReservation);
     }
 
-   /* @CrossOrigin(origins = "http://localhost:3000")
-    @PutMapping("/reservations/{id}")
-    Reservation updateOrder(@RequestBody Reservation newReservation, @PathVariable Long id) {
-        return reservationServices.saveReservation(newReservation);
-    }
 
 
 
 
-   @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/reservations/{id}")
-    Reservation getOrderById(@PathVariable Long id)
-    {
-        Reservation ret = repository.findById(id).orElseThrow(() -> new IllegalStateException("Order id: "+ id +" not found."));
 
-        return ret;
-    }
-    */
+
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/reservations/{id}")
@@ -153,32 +227,7 @@ public class ReservationController {
         return ret;
     }
 
-/*
-    @CrossOrigin(origins = "http://localhost:3000")
-    @PutMapping("/reservations/{id}")
-    Reservation replaceOrder(@RequestBody Reservation newReservation, @PathVariable Long id)
-    {
 
-        Reservation ret =  repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found on :: "+ id));;
-        ret.setFirstName(newReservation.getFirstName());
-        ret.setLastName(newReservation.getLastName());
-        ret.setPersonIdNumber(newReservation.getPersonIdNumber());
-        ret.setPhone(newReservation.getPhone());
-        ret.setEmail(newReservation.getEmail());
-        ret.setPlateNumber(newReservation.getPlateNumber());
-        ret.setReservationDate(newReservation.getReservationDate());
-        ret.setReservationTime(newReservation.getReservationTime());
-        ret.setNote(newReservation.getNote());
-        ret.setNationality(newReservation.getNationality());
-        reservationServices.saveReservation(ret);
-
-        return ret;
-    }
-
-
-
-
-*/
 
 
     @DeleteMapping("/reservations/{id}")
