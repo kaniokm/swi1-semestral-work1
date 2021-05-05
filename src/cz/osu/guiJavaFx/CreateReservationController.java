@@ -106,17 +106,7 @@ public class CreateReservationController implements Initializable {
                 System.out.println( json);
 
 
-                Map<String,String> parameters = new HashMap<>();
-                parameters.put("firstName",tfName.getText());
-                parameters.put("lastName",tfSurname.getText());
-                parameters.put("personIdNumber",tfPersonIdNumber.getText());
-                parameters.put("phone",tfPhone.getText());
-                parameters.put("email",tfEmail.getText());
-                parameters.put("plateNumber",tfName.getText());
-                parameters.put("note","tfNote.getText()");
-                parameters.put("reservationDate","2021-04-30");
-                parameters.put("reservationTime","13:00:00");
-                parameters.put("nationality","cz");
+
 
 
                 con.setConnectTimeout(5000);
