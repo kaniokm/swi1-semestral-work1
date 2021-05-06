@@ -22,6 +22,7 @@ import java.time.LocalTime;
 import java.util.Date;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 /**
  * @author Greg Turnquist
@@ -33,18 +34,17 @@ public class Reservation {
 
 
 	 @Id @GeneratedValue private long id;
+	@NotBlank(message = "First name is mandatory")private String firstName;
 
-	private String firstName;
+	@NotBlank(message = "Last name is mandatory")private String lastName;
 
-	private String lastName;
+	@NotBlank(message = "Personal identification number is mandatory")private String personIdNumber;
 
-	private String personIdNumber;
+	@NotBlank (message = "Phone is mandatory")private String phone;
 
-	private String phone;
+	@NotBlank(message = "Email is mandatory")private String email;
 
-	private String email;
-
-	private String plateNumber;
+	@NotBlank(message = "Registration plate is mandatory")private String plateNumber;
 
 	private LocalDate reservationDate;
 
@@ -52,7 +52,7 @@ public class Reservation {
 
 	private String note;
 
-	private String nationality;
+	@NotBlank(message = "Nationality is mandatory")private String nationality;
 
 	public Reservation() {}
 

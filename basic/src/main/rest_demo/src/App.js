@@ -4,10 +4,10 @@ import {Button, Card, Col, Container, Form, ListGroup, Row} from "react-bootstra
 import BaseSelect from 'react-select'
 import DatePicker from "react-datepicker";
 import FixRequiredSelect from "./FixRequiredSelect";
-import validator from 'react-validation';
+
 import PropTypes from "prop-types";
 
-import Input from 'react-validation/build/input';
+
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 
@@ -28,7 +28,10 @@ const Select = props => (
         SelectComponent={BaseSelect}
 
     />
+
+
 );
+
 
 
 
@@ -44,7 +47,7 @@ class App extends React.Component {
             data: [],
             dataTimes: [],
             error: null,
-
+            errors: [],
 
 
 
@@ -52,7 +55,7 @@ class App extends React.Component {
 
             newReservationDate:new Date(2021,4,5,20,0,0),
 
-            newReservationTime:"",
+            newReservationTime:"wrong",
             newFirstName: "",
             newLastName: "",
             newPersonIdNumber: "",
@@ -143,6 +146,8 @@ class App extends React.Component {
 
 
 
+
+
     onChange = (e, name) => {
 
 
@@ -189,30 +194,11 @@ class App extends React.Component {
         });
     }
 
-    updateExisting = () => {
-        const axios = require('axios').default;
-        axios({
-            method: 'put',
-            url: 'http://localhost:8080/reservations/' + this.state.reservationId,
-            data: {
 
 
-                "firstName": this.state.updateFirstName,
-                "lastName": this.state.updateLastName,
-                "plateNumber": this.state.updatePlateNumber,
-                "personIdNumber": this.state.updatePersonIdNumber,
-                "phone": this.state.updatePhone,
-                "email": this.state.updateEmail,
-                "note": this.state.updateNote,
-                "nationality": this.state.updateNationality
-            }
-        }).then((response) => {
-            console.log(response);
-        }, (error) => {
-            console.log(error);
-        });
 
-    }
+
+
 
 
     render() {
@@ -231,7 +217,8 @@ class App extends React.Component {
                     <Card.Header></Card.Header>
                     <Card.Body>
                         <Card.Title>Vytvořte novou rezervaci</Card.Title>
-                        <Form>
+                        <Form >
+
                             <Form.Group controlId="firstNameId">
                                 Zadejte jméno
                                 <Form.Control

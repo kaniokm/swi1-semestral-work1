@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -91,38 +92,8 @@ public class ReservationController {
 
         return  ret;
     }
-/*
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/reservations/localdate/timesjson")
-    JSONArray allTimesByDateJSON(@RequestParam("localDate")
-                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate)
-    {
 
 
-        List<Reservation> data = repository.findAllByReservationDate(localDate);
-
-
-        JSONArray jsonList = new JSONArray();
-
-
-
-
-        for (Reservation r:data
-        ) {
-            JSONObject valuesObject = new JSONObject();
-            valuesObject.put("value",r.getReservationTime());
-            valuesObject.put("label",r.getReservationTime());
-
-            jsonList.add(valuesObject);
-
-        }
-
-
-
-
-        return  jsonList;
-    }
-*/
 
 
 
@@ -188,7 +159,7 @@ public class ReservationController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/reservations")
-    Reservation newOrder(@RequestBody Reservation newReservation)
+    Reservation newOrder(@Valid @RequestBody Reservation newReservation)
     {
 
         return repository.save(newReservation);
