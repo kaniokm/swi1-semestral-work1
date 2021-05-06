@@ -88,7 +88,7 @@ public class CreateReservationController implements Initializable {
         return matcher.find();
     }
 
-    public void createNewReservationToDb(ActionEvent actionEvent) {
+    public void requestCreateNewReservation(ActionEvent actionEvent) {
         if (tfName.getText().equals("") || tfSurname.getText().equals("") || tfPersonIdNumber.getText().equals("") || tfPlateNumber.getText().equals("") || (tfPhone.getText().equals("") || tfEmail.getText().equals(""))||comBoxReservedTime.getValue()==null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Error");

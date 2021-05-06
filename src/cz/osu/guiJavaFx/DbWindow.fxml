@@ -5,11 +5,11 @@
 
 <AnchorPane prefHeight="480.0" prefWidth="1063.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cz.osu.guiJavaFx.DbController">
    <children>
-      <Button fx:id="btnRefresh" layoutX="455.0" layoutY="38.0" mnemonicParsing="false" onAction="#refresh" prefHeight="37.0" prefWidth="154.0" text="Obnovit data v tabulce" />
+      <Button fx:id="btnRefresh" layoutX="455.0" layoutY="38.0" mnemonicParsing="false" onAction="#requestRefresh" prefHeight="37.0" prefWidth="154.0" text="Obnovit data v tabulce" />
       <Button fx:id="btnToday" layoutX="344.0" layoutY="44.0" mnemonicParsing="false" onAction="#setToday" text="Dnes" />
       <Label layoutX="27.0" layoutY="48.0" text="Datum:" />
       <Button fx:id="btnPreviousDate" layoutX="75.0" layoutY="44.0" mnemonicParsing="false" onAction="#showPreviousDate" prefHeight="25.0" prefWidth="30.0" text="&lt;" />
-      <DatePicker fx:id="datePicker" layoutX="115.0" layoutY="44.0" onAction="#refresh" />
+      <DatePicker fx:id="datePicker" layoutX="115.0" layoutY="44.0" onAction="#requestRefresh" />
       <Button fx:id="btnNextDate" layoutX="301.0" layoutY="44.0" mnemonicParsing="false" onAction="#showNextDate" prefHeight="25.0" prefWidth="30.0" text="&gt;" />
       <TableView fx:id="tableView" layoutX="27.0" layoutY="97.0" prefHeight="252.0" prefWidth="1046.0">
         <columns>

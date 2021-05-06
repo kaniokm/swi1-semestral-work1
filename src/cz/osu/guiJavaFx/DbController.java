@@ -2,7 +2,6 @@ package cz.osu.guiJavaFx;
 
 import cz.osu.database.DatabaseConnect;
 import cz.osu.database.DatabaseData;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,7 +25,6 @@ import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -81,7 +79,7 @@ public class DbController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         selectedDate = LocalDate.now();
         datePicker.setValue(selectedDate);
-        refresh();
+        requestRefresh();
     }
 
     public void createWindowCreateNewReservation(ActionEvent actionEvent) {
@@ -114,7 +112,7 @@ public class DbController implements Initializable {
             stage.initOwner(((Node) actionEvent.getSource()).getScene().getWindow());
 
             stage.showAndWait();
-            refresh();
+            requestRefresh();
 
         } catch (Exception e) {
             System.out.println("unable to open new window or edit");
@@ -165,7 +163,7 @@ public class DbController implements Initializable {
                     }
 
                     con.disconnect();
-                    refresh();
+                    requestRefresh();
 
                     //tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
                 } catch (MalformedURLException e) {
@@ -190,7 +188,7 @@ public class DbController implements Initializable {
 
 
 
-    public void refresh() {
+    public void requestRefresh() {
 
 
 
@@ -228,18 +226,18 @@ public class DbController implements Initializable {
     public void showPreviousDate(ActionEvent actionEvent) {
         selectedDate = selectedDate.minusDays(1);
         datePicker.setValue(selectedDate);
-        refresh();
+        requestRefresh();
     }
 
     public void showNextDate(ActionEvent actionEvent) {
         selectedDate = selectedDate.plusDays(1);
         datePicker.setValue(selectedDate);
-        refresh();
+        requestRefresh();
     }
 
     public void setToday(ActionEvent actionEvent) {
         selectedDate = LocalDate.now();
         datePicker.setValue(selectedDate);
-        refresh();
+        requestRefresh();
     }
 }
