@@ -25,8 +25,8 @@
             <TableColumn fx:id="colNote" prefWidth="411.0" text="Popis" />
         </columns>
       </TableView>
-      <Button fx:id="btnCreate" layoutX="105.0" layoutY="369.0" mnemonicParsing="false" onAction="#createNewReservation" prefHeight="56.0" prefWidth="110.0" text="Vytvořit" />
-      <Button fx:id="btnEdit" layoutX="289.0" layoutY="369.0" mnemonicParsing="false" onAction="#editSelectedReservation" prefHeight="56.0" prefWidth="110.0" text="Upravit" />
+      <Button fx:id="btnCreate" layoutX="105.0" layoutY="369.0" mnemonicParsing="false" onAction="#createWindowCreateNewReservation" prefHeight="56.0" prefWidth="110.0" text="Vytvořit" />
+      <Button fx:id="btnEdit" layoutX="289.0" layoutY="369.0" mnemonicParsing="false" onAction="#createWindowEditSelectedReservation" prefHeight="56.0" prefWidth="110.0" text="Upravit" />
       <Button fx:id="btnDelete" layoutX="476.0" layoutY="369.0" mnemonicParsing="false" onAction="#deleteSelectedReservation" prefHeight="56.0" prefWidth="110.0" style="-fx-background-color: pink; -fx-border-color: black;" text="Smazat" />
    </children>
 </AnchorPane>

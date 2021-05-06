@@ -84,11 +84,11 @@ public class DbController implements Initializable {
         refresh();
     }
 
-    public void createNewReservation(ActionEvent actionEvent) {
+    public void createWindowCreateNewReservation(ActionEvent actionEvent) {
         createNewWindow(actionEvent,"CreateReservationWindow.fxml","Nová rezervace na den: " );
     }
 
-    public void editSelectedReservation(ActionEvent actionEvent) {
+    public void createWindowEditSelectedReservation(ActionEvent actionEvent) {
         createNewWindow(actionEvent,"EditReservationWindow.fxml","Edit Reservation");
 
 
