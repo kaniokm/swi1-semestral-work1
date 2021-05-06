@@ -95,13 +95,16 @@ public class EditReservationController implements Initializable {
     }
 
 
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-   /* public static final Pattern VALID_PHONE_Number_REGEX =
-            Pattern.compile("^[+]?[()\0-9. -]{9,}$", Pattern.CASE_INSENSITIVE);*/
 
-    public static boolean validate(String emailOrPhoneStr, Pattern regexPattern) {
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailOrPhoneStr);
+    public static boolean validateEmail(String emailOrPhoneStr) {
+        Pattern pattern = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(emailOrPhoneStr);
+        return matcher.find();
+    }
+
+    public static boolean validatePhone(String number) {
+        Pattern pattern = Pattern.compile("^[+]?[()\0-9. -]{9,}$");
+        Matcher matcher = pattern.matcher(number);
         return matcher.find();
     }
 
@@ -114,15 +117,15 @@ public class EditReservationController implements Initializable {
             alert.setContentText("Vyplňte prosím důležitá pole !!!");
             alert.showAndWait();
         } else {
-           /* if (!validate(tfPhone.getText(),VALID_PHONE_Number_REGEX)) {
+            if (!validatePhone(tfPhone.getText())) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("Error");
                 alert.setHeaderText(null);
                 alert.setContentText("Neplatné telefoní číslo !!!");
                 alert.showAndWait();
                 return;
-            }*/
-            if (!validate(tfEmail.getText(), VALID_EMAIL_ADDRESS_REGEX)) {
+            }
+            if (!validateEmail(tfEmail.getText())) {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("Error");
                 alert.setHeaderText(null);

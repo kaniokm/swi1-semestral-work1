@@ -25,7 +25,6 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static cz.osu.guiJavaFx.EditReservationController.VALID_EMAIL_ADDRESS_REGEX;
 
 public class CreateReservationController implements Initializable {
     @FXML
@@ -92,15 +91,15 @@ public class CreateReservationController implements Initializable {
             URL url = null;
             try {
                 //if (!tfPhone.getText().matches("/^[^a-zA-Z]*$/")) {
-                /*if (!EditReservationController.validate(tfPhone.getText(),VALID_PHONE_Number_REGEX)) {
+                if (!EditReservationController.validatePhone(tfPhone.getText())) {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setTitle("Error");
                     alert.setHeaderText(null);
                     alert.setContentText("Neplatné telefoní číslo !!!");
                     alert.showAndWait();
                     return;
-                }*/
-                if (!EditReservationController.validate(tfEmail.getText(),VALID_EMAIL_ADDRESS_REGEX)) {
+                }
+                if (!EditReservationController.validateEmail(tfEmail.getText())) {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setTitle("Error");
                     alert.setHeaderText(null);
