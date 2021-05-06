@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/web/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -13,7 +14,6 @@
     <orderEntry type="library" name="mysql-connector-java-8.0" level="project" />
     <orderEntry type="library" name="jackson-core-2.12.3" level="project" />
     <orderEntry type="library" name="jackson-databind-2.12.3" level="project" />
-    <orderEntry type="library" name="jackson-annotations-2.12.3" level="project" />
     <orderEntry type="library" name="jackson-datatype-jsr310-2.12.3" level="project" />
   </component>
 </module>

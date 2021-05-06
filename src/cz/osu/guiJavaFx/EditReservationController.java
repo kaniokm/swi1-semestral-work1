@@ -18,6 +18,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static cz.osu.guiJavaFx.DbController.selectedId;
 import static cz.osu.guiJavaFx.DbController.selectedTime;
@@ -62,14 +64,9 @@ public class EditReservationController implements Initializable {
         listedTimes = FXCollections.observableArrayList();
 
 
-
-
-
-
-
         ObservableList<LocalTime> todaysListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(DbController.selectedDate);
 
-        System.out.println(todaysListedTimes);
+        //    System.out.println(todaysListedTimes);
 
 
         listedTimes.addAll(todaysListedTimes);
@@ -94,6 +91,19 @@ public class EditReservationController implements Initializable {
         comBoxReservedTime.setItems(showListOfAvailibeTimes);
     }
 
+    public void reloadDate(ActionEvent actionEvent) {
+    }
+
+
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+   /* public static final Pattern VALID_PHONE_Number_REGEX =
+            Pattern.compile("^[+]?[()\0-9. -]{9,}$", Pattern.CASE_INSENSITIVE);*/
+
+    public static boolean validate(String emailOrPhoneStr, Pattern regexPattern) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailOrPhoneStr);
+        return matcher.find();
+    }
 
     public void editReservationToDb(ActionEvent actionEvent) {
         if (tfName.getText().equals("") || tfSurname.getText().equals("") || tfPersonIdNumber.getText().equals("") || tfPlateNumber.getText().equals("") || (tfPhone.getText().equals("") && tfEmail.getText().equals(""))) {
@@ -103,29 +113,42 @@ public class EditReservationController implements Initializable {
             alert.setContentText("Vyplňte prosím důležitá pole !!!");
             alert.showAndWait();
         } else {
+           /* if (!validate(tfPhone.getText(),VALID_PHONE_Number_REGEX)) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Neplatné telefoní číslo !!!");
+                alert.showAndWait();
+                return;
+            }*/
+            if (!validate(tfEmail.getText(), VALID_EMAIL_ADDRESS_REGEX)) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Neplatný email !!!");
+                alert.showAndWait();
+                return;
+            }
             URL url = null;
             try {
-                url = new URL("http://localhost:8080/reservations/"+ selectedId);
+                url = new URL("http://localhost:8080/reservations/" + selectedId);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("PUT");
 
 
                 String json = "{\n" +
-                        "\"reservationDate\": \"" +DbController.selectedDate+"\",\n" +
-                        "\"reservationTime\": \"" +comBoxReservedTime.getValue()+":00"+"\",\n" +
-                        "\"firstName\": \"" +tfName.getText()+"\",\n" +
-                        "\"lastName\": \"" +tfSurname.getText()+"\",\n" +
-                        "\"plateNumber\": \"" +tfPlateNumber.getText()+"\",\n" +
-                        "\"personIdNumber\": \"" +tfPersonIdNumber.getText()+"\",\n" +
-                        "\"phone\": \"" +tfPhone.getText()+"\",\n" +
-                        "\"email\": \"" +tfEmail.getText()+"\",\n" +
-                        "\"note\": \"" +tfNote.getText().replaceAll("[\r\n]+", " ")+"\",\n" +
-                        "\"nationality\": \"" +(rdCz.isSelected() ? "cz" : "--")+"\"\n" +
+                        "\"reservationDate\": \"" + DbController.selectedDate + "\",\n" +
+                        "\"reservationTime\": \"" + comBoxReservedTime.getValue() + ":00" + "\",\n" +
+                        "\"firstName\": \"" + tfName.getText() + "\",\n" +
+                        "\"lastName\": \"" + tfSurname.getText() + "\",\n" +
+                        "\"plateNumber\": \"" + tfPlateNumber.getText() + "\",\n" +
+                        "\"personIdNumber\": \"" + tfPersonIdNumber.getText() + "\",\n" +
+                        "\"phone\": \"" + tfPhone.getText() + "\",\n" +
+                        "\"email\": \"" + tfEmail.getText() + "\",\n" +
+                        "\"note\": \"" + tfNote.getText().replaceAll("[\r\n]+", " ") + "\",\n" +
+                        "\"nationality\": \"" + (rdCz.isSelected() ? "cz" : "--") + "\"\n" +
                         "}";
-                System.out.println( json);
-
-
-
+                System.out.println(json);
 
 
                 con.setConnectTimeout(5000);
@@ -159,7 +182,6 @@ public class EditReservationController implements Initializable {
                 con.disconnect();
 
 
-
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (ProtocolException e) {
@@ -181,6 +203,6 @@ public class EditReservationController implements Initializable {
         });
         stage.close();
     }
-
-
 }
+
+
