@@ -98,7 +98,7 @@ public class DatabaseConnect {
 
 
 
-    public static DatabaseData getSelectedDataById(int id) {
+    public static DatabaseData getSelectedDatabaseDataById(int id) {
 
 
         DatabaseData data = new DatabaseData();
