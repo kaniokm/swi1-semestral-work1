@@ -186,6 +186,27 @@ public class CreateReservationController implements Initializable {
         }
     }
 
+    public void reloadDate() {
+        System.out.println("reload");
+
+        ObservableList<LocalTime> todayListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(DbController.selectedDate);
+        System.out.println(todayListedTimes);
+
+
+
+        ObservableList<LocalTime> showListOfAvailableTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0), LocalTime.of(9, 0), LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 0), LocalTime.of(13, 0), LocalTime.of(14, 0), LocalTime.of(15, 0), LocalTime.of(16, 0));;
+        // showListOfAvailableTimes.addAll(defaultListOfTimes) ;
+        System.out.println(showListOfAvailableTimes);
+        ObservableList<LocalTime> listedTimes = FXCollections.observableArrayList();
+        listedTimes.addAll(showListOfAvailableTimes);
+        System.out.println(listedTimes);
+        listedTimes.removeAll(todayListedTimes);
+        System.out.println(listedTimes);
+        comBoxReservedTime.setItems(listedTimes);
+    }
+
+
+
     public void closeButtonAction(ActionEvent actionEvent) {
         Stage stage = (Stage) btnClose.getScene().getWindow();
         stage.setOnCloseRequest((WindowEvent event) -> {
