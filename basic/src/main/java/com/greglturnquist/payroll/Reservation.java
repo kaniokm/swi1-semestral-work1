@@ -22,7 +22,9 @@ import java.time.LocalTime;
 import java.util.Date;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Greg Turnquist
@@ -42,12 +44,14 @@ public class Reservation {
 
 	@NotBlank (message = "Phone is mandatory")private String phone;
 
-	@NotBlank(message = "Email is mandatory")private String email;
+	@NotBlank @Email(message = "Email is mandatory")private String email;
 
 	@NotBlank(message = "Registration plate is mandatory")private String plateNumber;
 
+	@NotNull
 	private LocalDate reservationDate;
 
+	@NotNull
 	private LocalTime reservationTime;
 
 	private String note;
