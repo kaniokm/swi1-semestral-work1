@@ -25,6 +25,7 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class CreateReservationController implements Initializable {
     @FXML
     private TextField tfName;
@@ -76,20 +77,11 @@ public class CreateReservationController implements Initializable {
         });*/
     }
 
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-    public static final Pattern VALID_PHONE_Number_REGEX =
-            Pattern.compile("/^[^a-zA-Z]*$/", Pattern.CASE_INSENSITIVE);
-    // Pattern.compile("^[+]?[()\0-9. -]{9,}$", Pattern.CASE_INSENSITIVE);
 
 
-    public static boolean validate(String emailOrPhoneStr, Pattern regexPattern) {
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailOrPhoneStr);
-        return matcher.find();
-    }
-
-    public void requestCreateNewReservation(ActionEvent actionEvent) {
-        if (tfName.getText().equals("") || tfSurname.getText().equals("") || tfPersonIdNumber.getText().equals("") || tfPlateNumber.getText().equals("") || (tfPhone.getText().equals("") || tfEmail.getText().equals(""))||comBoxReservedTime.getValue()==null) {
+    public void createNewReservationToDb(ActionEvent actionEvent) {
+        if (tfName.getText().equals("") || tfSurname.getText().equals("") || tfPersonIdNumber.getText().equals("") || tfPlateNumber.getText().equals("") ||
+                (tfPhone.getText().equals("") || tfEmail.getText().equals(""))||comBoxReservedTime.getValue()==null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Error");
             alert.setHeaderText(null);
@@ -99,15 +91,15 @@ public class CreateReservationController implements Initializable {
             URL url = null;
             try {
                 //if (!tfPhone.getText().matches("/^[^a-zA-Z]*$/")) {
-                /*if (!validate(tfPhone.getText(),VALID_PHONE_Number_REGEX)) {
+                if (!EditReservationController.validatePhone(tfPhone.getText())) {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setTitle("Error");
                     alert.setHeaderText(null);
                     alert.setContentText("Neplatné telefoní číslo !!!");
                     alert.showAndWait();
                     return;
-                }*/
-                if (!validate(tfEmail.getText(),VALID_EMAIL_ADDRESS_REGEX)) {
+                }
+                if (!EditReservationController.validateEmail(tfEmail.getText())) {
                     Alert alert = new Alert(Alert.AlertType.WARNING);
                     alert.setTitle("Error");
                     alert.setHeaderText(null);
@@ -185,27 +177,6 @@ public class CreateReservationController implements Initializable {
             stage.close();
         }
     }
-
-    public void reloadDate() {
-        System.out.println("reload");
-
-        ObservableList<LocalTime> todayListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(DbController.selectedDate);
-        System.out.println(todayListedTimes);
-
-
-
-        ObservableList<LocalTime> showListOfAvailableTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0), LocalTime.of(9, 0), LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 0), LocalTime.of(13, 0), LocalTime.of(14, 0), LocalTime.of(15, 0), LocalTime.of(16, 0));;
-        // showListOfAvailableTimes.addAll(defaultListOfTimes) ;
-        System.out.println(showListOfAvailableTimes);
-        ObservableList<LocalTime> listedTimes = FXCollections.observableArrayList();
-        listedTimes.addAll(showListOfAvailableTimes);
-        System.out.println(listedTimes);
-        listedTimes.removeAll(todayListedTimes);
-        System.out.println(listedTimes);
-        comBoxReservedTime.setItems(listedTimes);
-    }
-
-
 
     public void closeButtonAction(ActionEvent actionEvent) {
         Stage stage = (Stage) btnClose.getScene().getWindow();
