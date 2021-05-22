@@ -63,7 +63,7 @@ class EditReservationControllerTest {
     @org.junit.jupiter.api.Test
     void validatephone1() {
         boolean ans = true;
-        String num = "+420777112233";
+        String num = "777 112 233, 123 456 789";
         boolean value =  EditReservationController.validatePhone(num);
         assertEquals(ans,value);
     }
