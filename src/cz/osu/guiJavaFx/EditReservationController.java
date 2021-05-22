@@ -43,6 +43,11 @@ public class EditReservationController implements Initializable {
     private ComboBox<LocalTime> comBoxReservedTime;
 
     @FXML
+    private DatePicker datePicker;
+
+
+
+    @FXML
     public Button btnClose;
     @FXML
     public Button btnSave;
@@ -55,16 +60,22 @@ public class EditReservationController implements Initializable {
     private RadioButton rdOther;
 
 
-    private final ObservableList<LocalTime> defaultListOfTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0), LocalTime.of(9, 0), LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 0), LocalTime.of(13, 0), LocalTime.of(14, 0), LocalTime.of(15, 0), LocalTime.of(16, 0));
+    public ObservableList<LocalTime> defaultListOfTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0), LocalTime.of(9, 0), LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 0), LocalTime.of(13, 0), LocalTime.of(14, 0), LocalTime.of(15, 0), LocalTime.of(16, 0));
     private ObservableList<LocalTime> listedTimes;
     private ObservableList<LocalTime> showListOfAvailibeTimes;
+    ObservableList<LocalTime> todaysListedTimes;
+
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        datePicker.setValue(DbController.selectedDate);
         listedTimes = FXCollections.observableArrayList();
 
 
-        ObservableList<LocalTime> todaysListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(DbController.selectedDate);
+
+        todaysListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(datePicker.getValue());
 
         //    System.out.println(todaysListedTimes);
 
@@ -72,7 +83,7 @@ public class EditReservationController implements Initializable {
         listedTimes.addAll(todaysListedTimes);
         listedTimes.remove(selectedTime);
 
-        DatabaseData data = DatabaseConnect.getSelectedDataById(selectedId);
+        DatabaseData data = DatabaseConnect.getSelectedDatabaseDataById(selectedId);
 
         tfName.setText(data.getName());
         tfSurname.setText(data.getSurname());
@@ -89,10 +100,9 @@ public class EditReservationController implements Initializable {
         showListOfAvailibeTimes.removeAll(listedTimes);
         comBoxReservedTime.setValue(selectedTime);
         comBoxReservedTime.setItems(showListOfAvailibeTimes);
+
     }
 
-    public void reloadDate(ActionEvent actionEvent) {
-    }
 
 
 
@@ -108,9 +118,8 @@ public class EditReservationController implements Initializable {
         return matcher.find();
     }
 
-    public void editReservationToDb(ActionEvent actionEvent) {
-        if (tfName.getText().equals("") || tfSurname.getText().equals("") || tfPersonIdNumber.getText().equals("") || tfPlateNumber.getText().equals("") ||
-                (tfPhone.getText().equals("") || tfEmail.getText().equals(""))) {
+    public void requestEditReservation(ActionEvent actionEvent) {
+        if (tfName.getText().equals("") || tfSurname.getText().equals("") || tfPersonIdNumber.getText().equals("") || tfPlateNumber.getText().equals("") || (tfPhone.getText().equals("") || tfEmail.getText().equals(""))||comBoxReservedTime.getValue()==null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Error");
             alert.setHeaderText(null);
@@ -141,7 +150,7 @@ public class EditReservationController implements Initializable {
 
 
                 String json = "{\n" +
-                        "\"reservationDate\": \"" + DbController.selectedDate + "\",\n" +
+                        "\"reservationDate\": \"" + datePicker.getValue() + "\",\n" +
                         "\"reservationTime\": \"" + comBoxReservedTime.getValue() + ":00" + "\",\n" +
                         "\"firstName\": \"" + tfName.getText() + "\",\n" +
                         "\"lastName\": \"" + tfSurname.getText() + "\",\n" +
@@ -200,6 +209,28 @@ public class EditReservationController implements Initializable {
         }
     }
 
+
+    public void reloadDate() {
+        System.out.println("reload");
+        DbController.selectedDate=datePicker.getValue();
+        System.out.println(datePicker.getValue());
+        ObservableList<LocalTime> todayListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(datePicker.getValue());
+        System.out.println(todayListedTimes);
+
+
+
+        ObservableList<LocalTime> showListOfAvailableTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0), LocalTime.of(9, 0), LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 0), LocalTime.of(13, 0), LocalTime.of(14, 0), LocalTime.of(15, 0), LocalTime.of(16, 0));;
+       // showListOfAvailableTimes.addAll(defaultListOfTimes) ;
+        System.out.println(showListOfAvailableTimes);
+        ObservableList<LocalTime> listedTimes = FXCollections.observableArrayList();
+        listedTimes.addAll(showListOfAvailableTimes);
+        System.out.println(listedTimes);
+        listedTimes.removeAll(todayListedTimes);
+        System.out.println(listedTimes);
+        comBoxReservedTime.setItems(listedTimes);
+    }
+
+
     public void closeButtonAction(ActionEvent actionEvent) {
         Stage stage = (Stage) btnClose.getScene().getWindow();
         stage.setOnCloseRequest((WindowEvent event) -> {
@@ -208,3 +239,5 @@ public class EditReservationController implements Initializable {
         stage.close();
     }
 }
+
+
