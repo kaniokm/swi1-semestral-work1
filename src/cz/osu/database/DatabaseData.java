@@ -36,7 +36,8 @@ public class DatabaseData {
     public DatabaseData() {
     }
 
-    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber, LocalDate reservationDate, LocalTime reservationTime, String note, String nationality) {
+    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber,
+                        LocalDate reservationDate, LocalTime reservationTime, String note, String nationality) {
         this.id = id;
         this.name = name;
         this.surname = surname;

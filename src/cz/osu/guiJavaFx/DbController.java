@@ -83,13 +83,11 @@ public class DbController implements Initializable {
     }
 
     public void createWindowCreateNewReservation(ActionEvent actionEvent) {
-        createNewWindow(actionEvent,"CreateReservationWindow.fxml","Nová rezervace na den: " );
+        createNewWindow(actionEvent,"CreateReservationWindow.fxml","Nová rezervace:" );
     }
 
     public void createWindowEditSelectedReservation(ActionEvent actionEvent) {
-        createNewWindow(actionEvent,"EditReservationWindow.fxml","Edit Reservation");
-
-
+        createNewWindow(actionEvent,"EditReservationWindow.fxml","Úprava rezervace:");
     }
 
     private void createNewWindow(javafx.event.ActionEvent actionEvent, String window,String title){
@@ -101,7 +99,6 @@ public class DbController implements Initializable {
         catch (Exception ignored){}
 
         try {
-
 
             FXMLLoader fxmLoader = new FXMLLoader(getClass().getResource(window));
             Parent root = (Parent) fxmLoader.load();
@@ -121,9 +118,6 @@ public class DbController implements Initializable {
     }
 
     public void deleteSelectedReservation(javafx.event.ActionEvent actionEvent) {
-
-
-
         int id;
         URL url;
         try {
@@ -178,21 +172,11 @@ public class DbController implements Initializable {
             System.out.println("nothing selected");
         }
 
-
-
-
-
-
-
     }
 
 
 
     public void requestRefresh() {
-
-
-
-
 
         ObservableList<DatabaseData> reservationList = DatabaseConnect.getDatabaseDataListForSelectedDay(datePicker.getValue());
         showData(reservationList);

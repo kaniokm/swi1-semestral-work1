@@ -1,6 +1,5 @@
 package cz.osu.guiJavaFx;
 
-import cz.osu.ParameterStringBuilder;
 import cz.osu.database.DatabaseConnect;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,13 +16,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CreateReservationController implements Initializable {
     @FXML
@@ -56,7 +49,9 @@ public class CreateReservationController implements Initializable {
     private RadioButton rdOther;
 
 
-    private final ObservableList<LocalTime> defaultListOfTimes = FXCollections.observableArrayList(LocalTime.of(7, 0,0), LocalTime.of(8, 0,0), LocalTime.of(9, 0,0), LocalTime.of(10, 0,0), LocalTime.of(11, 0,0), LocalTime.of(12, 0,0), LocalTime.of(13, 0,0), LocalTime.of(14, 0,0), LocalTime.of(15, 0,0), LocalTime.of(16, 0,0));
+    private final ObservableList<LocalTime> defaultListOfTimes = FXCollections.observableArrayList(LocalTime.of(7, 0,0), LocalTime.of(8, 0,0),
+            LocalTime.of(9, 0,0), LocalTime.of(10, 0,0), LocalTime.of(11, 0,0), LocalTime.of(12, 0,0),
+            LocalTime.of(13, 0,0), LocalTime.of(14, 0,0), LocalTime.of(15, 0,0), LocalTime.of(16, 0,0));
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -76,47 +71,39 @@ public class CreateReservationController implements Initializable {
         });*/
     }
 
-    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-    public static final Pattern VALID_PHONE_Number_REGEX =
-            Pattern.compile("/^[^a-zA-Z]*$/", Pattern.CASE_INSENSITIVE);
-    // Pattern.compile("^[+]?[()\0-9. -]{9,}$", Pattern.CASE_INSENSITIVE);
-
-
-    public static boolean validate(String emailOrPhoneStr, Pattern regexPattern) {
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailOrPhoneStr);
-        return matcher.find();
-    }
 
     public void requestCreateNewReservation(ActionEvent actionEvent) {
-
-            if (tfName.getText().equals("") || tfSurname.getText().equals("") || tfPersonIdNumber.getText().equals("") || tfPlateNumber.getText().equals("") ||
-                    (tfPhone.getText().equals("") || tfEmail.getText().equals(""))||comBoxReservedTime.getValue()==null) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText("Vyplňte prosím všechna pole !!!");
-                alert.showAndWait();
+            if (tfName.getText().trim().isEmpty() || tfSurname.getText().trim().isEmpty()
+                    || tfPersonIdNumber.getText().trim().isEmpty() || tfPlateNumber.getText().trim().isEmpty()
+                    || (tfPhone.getText().trim().isEmpty() || tfEmail.getText().trim().isEmpty())
+                    || comBoxReservedTime.getValue() == null) {
+                ShowErrorAlert("Error", "Vyplňte prosím všechna důležitá pole !!!");
             } else {
+                if (!EditReservationController.validatePhone(tfPhone.getText())) {
+                    ShowErrorAlert("Error", "Neplatné telefoní číslo !!!");
+                    return;
+                }
+                if (!EditReservationController.validateEmail(tfEmail.getText())) {
+                    ShowErrorAlert("Error", "Neplatný email !!!");
+                    return;
+                }
+                if (rdCz.isSelected()){
+                    if (!EditReservationController.validateCzechBirthNumberSyntax(tfPersonIdNumber.getText())) {
+                        ShowErrorAlert("Error", "Neplatná syntaxe českého rodného čísla !!! \nPlatné je např.: 580123/1158, nebo 5801231158");
+                        return;
+                    }else {
+                        if (!EditReservationController.validateCzechBirthNumberValue(tfPersonIdNumber.getText())){
+                            ShowErrorAlert("Error","Neplatné české rodné číslo !!! \nPlatné je např.: 580123/1158");
+                            return;
+                        }
+                        if (!tfPersonIdNumber.getText().contains("/")) {
+                            tfPersonIdNumber.setText(tfPersonIdNumber.getText().substring(0, 6) + "/" + tfPersonIdNumber.getText().substring(6));
+                        }
+                    }
+                }
+
                 URL url = null;
                 try {
-                    //if (!tfPhone.getText().matches("/^[^a-zA-Z]*$/")) {
-                    if (!EditReservationController.validatePhone(tfPhone.getText())) {
-                        Alert alert = new Alert(Alert.AlertType.WARNING);
-                        alert.setTitle("Error");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Neplatné telefoní číslo !!!");
-                        alert.showAndWait();
-                        return;
-                    }
-                    if (!EditReservationController.validateEmail(tfEmail.getText())) {
-                        Alert alert = new Alert(Alert.AlertType.WARNING);
-                        alert.setTitle("Error");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Neplatný email !!!");
-                        alert.showAndWait();
-                        return;
-                    }
                     url = new URL("http://localhost:8080/reservations");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("POST");
@@ -135,9 +122,6 @@ public class CreateReservationController implements Initializable {
                             "\"nationality\": \"" +(rdCz.isSelected() ? "cz" : "--")+"\"\n" +
                             "}";
                     System.out.println( json);
-
-
-
 
 
                     con.setConnectTimeout(5000);
@@ -189,6 +173,14 @@ public class CreateReservationController implements Initializable {
 
     }
 
+    private void ShowErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     public void reloadDate() {
         System.out.println("reload");
 
@@ -197,7 +189,9 @@ public class CreateReservationController implements Initializable {
 
 
 
-        ObservableList<LocalTime> showListOfAvailableTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0), LocalTime.of(9, 0), LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 0), LocalTime.of(13, 0), LocalTime.of(14, 0), LocalTime.of(15, 0), LocalTime.of(16, 0));;
+        ObservableList<LocalTime> showListOfAvailableTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0),
+                LocalTime.of(9, 0), LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 0),
+                LocalTime.of(13, 0), LocalTime.of(14, 0), LocalTime.of(15, 0), LocalTime.of(16, 0));;
         // showListOfAvailableTimes.addAll(defaultListOfTimes) ;
         System.out.println(showListOfAvailableTimes);
         ObservableList<LocalTime> listedTimes = FXCollections.observableArrayList();

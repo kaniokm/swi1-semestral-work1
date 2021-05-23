@@ -60,7 +60,9 @@ public class EditReservationController implements Initializable {
     private RadioButton rdOther;
 
 
-    public ObservableList<LocalTime> defaultListOfTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0), LocalTime.of(9, 0), LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 0), LocalTime.of(13, 0), LocalTime.of(14, 0), LocalTime.of(15, 0), LocalTime.of(16, 0));
+    public ObservableList<LocalTime> defaultListOfTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0),
+            LocalTime.of(9, 0), LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 0),
+            LocalTime.of(13, 0), LocalTime.of(14, 0), LocalTime.of(15, 0), LocalTime.of(16, 0));
     private ObservableList<LocalTime> listedTimes;
     private ObservableList<LocalTime> showListOfAvailibeTimes;
     ObservableList<LocalTime> todaysListedTimes;
@@ -118,30 +120,55 @@ public class EditReservationController implements Initializable {
         return matcher.find();
     }
 
+    public static boolean validateCzechBirthNumberSyntax(String number) {
+        Pattern pattern = Pattern.compile("^[0-9]{6}\\/?[0-9]{4}$");
+        Matcher matcher = pattern.matcher(number);
+        return matcher.find();
+    }
+    public static boolean validateCzechBirthNumberValue(String number) {
+        if (number.contains("/"))
+            number = number.replace("/","");
+        if (number.length()!=10)
+            return false;
+        if( Integer.parseInt(number.substring(4, 6)) < 1 || Integer.parseInt(number.substring(4, 6)) > 31 ||
+                Integer.parseInt(number.substring(2, 4)) < 1 || Integer.parseInt(number.substring(2, 4)) > 62 ||
+                (Integer.parseInt(number.substring(2, 4)) > 12 && Integer.parseInt(number.substring(2, 4)) < 51) ||
+                ((Integer.parseInt(number.substring(0, 9)) % 11) != Integer.parseInt(number.substring(9, 10))))
+            return false;
+        else
+            return true;
+    }
+
     public void requestEditReservation(ActionEvent actionEvent) {
-        if (tfName.getText().equals("") || tfSurname.getText().equals("") || tfPersonIdNumber.getText().equals("") || tfPlateNumber.getText().equals("") || (tfPhone.getText().equals("") || tfEmail.getText().equals(""))||comBoxReservedTime.getValue()==null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Vyplňte prosím důležitá pole !!!");
-            alert.showAndWait();
+        if (tfName.getText().trim().isEmpty() || tfSurname.getText().trim().isEmpty()
+                || tfPersonIdNumber.getText().trim().isEmpty() || tfPlateNumber.getText().trim().isEmpty()
+                || (tfPhone.getText().trim().isEmpty() || tfEmail.getText().trim().isEmpty())
+                || comBoxReservedTime.getValue() == null) {
+            ShowErrorAlert("Error","Vyplňte prosím všechna důležitá pole !!!");
         } else {
             if (!validatePhone(tfPhone.getText())) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText("Neplatné telefoní číslo !!!");
-                alert.showAndWait();
+                ShowErrorAlert("Error","Neplatné telefoní číslo !!!");
                 return;
             }
             if (!validateEmail(tfEmail.getText())) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText("Neplatný email !!!");
-                alert.showAndWait();
+                ShowErrorAlert("Error","Neplatný email !!!");
                 return;
             }
+            if (rdCz.isSelected()){
+                if (!validateCzechBirthNumberSyntax(tfPersonIdNumber.getText())) {
+                    ShowErrorAlert("Error","Neplatná syntaxe českého rodného čísla !!! \nPlatné je např.: 580123/1158, nebo 5801231158");
+                    return;
+                }else {
+                    if (!validateCzechBirthNumberValue(tfPersonIdNumber.getText())){
+                        ShowErrorAlert("Error","Neplatné české rodné číslo !!! \nPlatné je např.: 580123/1158");
+                        return;
+                    }
+                    if (!tfPersonIdNumber.getText().contains("/")) {
+                        tfPersonIdNumber.setText(tfPersonIdNumber.getText().substring(0, 6) + "/" + tfPersonIdNumber.getText().substring(6));
+                    }
+                }
+            }
+
             URL url = null;
             try {
                 url = new URL("http://localhost:8080/reservations/" + selectedId);
@@ -209,6 +236,14 @@ public class EditReservationController implements Initializable {
         }
     }
 
+    private void ShowErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 
     public void reloadDate() {
         System.out.println("reload");
@@ -217,9 +252,9 @@ public class EditReservationController implements Initializable {
         ObservableList<LocalTime> todayListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(datePicker.getValue());
         System.out.println(todayListedTimes);
 
-
-
-        ObservableList<LocalTime> showListOfAvailableTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0), LocalTime.of(9, 0), LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 0), LocalTime.of(13, 0), LocalTime.of(14, 0), LocalTime.of(15, 0), LocalTime.of(16, 0));;
+        ObservableList<LocalTime> showListOfAvailableTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0),
+                LocalTime.of(9, 0), LocalTime.of(10, 0), LocalTime.of(11, 0), LocalTime.of(12, 0),
+                LocalTime.of(13, 0), LocalTime.of(14, 0), LocalTime.of(15, 0), LocalTime.of(16, 0));;
        // showListOfAvailableTimes.addAll(defaultListOfTimes) ;
         System.out.println(showListOfAvailableTimes);
         ObservableList<LocalTime> listedTimes = FXCollections.observableArrayList();
