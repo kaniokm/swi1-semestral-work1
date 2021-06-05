@@ -18,6 +18,8 @@ package com.greglturnquist.payroll;
 import com.greglturnquist.validation.ValidReservation;
 //import com.greglturnquist.validation.ValidCzechPersonIdNumber;
 
+import org.hibernate.annotations.Target;
+
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;

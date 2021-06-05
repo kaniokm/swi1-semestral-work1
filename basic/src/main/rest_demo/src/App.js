@@ -1,15 +1,20 @@
 import React, {useState, Component, useRef} from "react";
-import {Button, Card, Col, Container, Form, ListGroup, Row} from "react-bootstrap";
+import {Alert, Button, Card, Col, Container, Form, ListGroup, Row} from "react-bootstrap";
 
 import BaseSelect from 'react-select'
 import DatePicker from "react-datepicker";
 import FixRequiredSelect from "./FixRequiredSelect";
+import SweetAlert from 'react-bootstrap-sweetalert';
 
+import { transitions, positions, useAlert, Provider as AlertProvider } from 'react-alert';
+import AlertTemplate from 'react-alert-template-basic'
 import PropTypes from "prop-types";
 
 
 import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
+import {timeout} from "rxjs/operators";
+
 
 
 
@@ -24,7 +29,6 @@ const optionsNationality = [
 
 
 
-
 const Select = props => (
     <FixRequiredSelect
         {...props}
@@ -35,6 +39,37 @@ const Select = props => (
 
 
 );
+function AlertDismissibleError() {
+    const [show, setShow] = useState(true);
+
+    if (show) {
+        return (
+            <Alert variant="danger" onClose={() => setShow(false)} dismissible>
+                <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                <p>
+                    Nepodařilo se uložit.
+                </p>
+            </Alert>
+        );
+    }
+    return <Button onClick={() => setShow(true)}>Show Alert</Button>;
+}
+
+function AlertDismissibleSuccess() {
+    const [show, setShow] = useState(false);
+
+    if (show) {
+        return (
+            <Alert variant="success" onClose={() => setShow(false)} dismissible>
+                <Alert.Heading>Success</Alert.Heading>
+                <p>
+                    Podařilo se uložit.
+                </p>
+            </Alert>
+        );
+    }
+    return <Button onClick={() => setShow(true)}>Show Alert</Button>;
+}
 
 
 
@@ -43,24 +78,28 @@ class App extends React.Component {
 
 
 
+
     constructor(props) {
         super(props);
 
         this.state = {
+            alert: null,
+            errorState: false,
+            successState: true,
             loading: true,
             data: [],
             dataTimes: [],
             error: null,
             errors: [],
             selectedValue: {label: 'Default value', key : '001'},
+            persons:"",
 
 
 
 
-            newReservationDate:new Date(),
-            //newReservationDate:new Date(2021,4,5,20,0,0),
+            newReservationDate:new Date(2021,4,5,20,0,0),
             dateSelect:"",
-            newReservationTime:"zvolte čas",
+            newReservationTime:null,
             newFirstName: "",
             newLastName: "",
             newPersonIdNumber: "",
@@ -80,14 +119,16 @@ class App extends React.Component {
 
 
 
+
+
     componentDidUpdate() {
         const axios = require('axios').default;
 
 
 
+        if(this.state.newReservationTime===null)
 
-
-        axios.get(APItimes+this.state.newReservationDate.toISOString().split("T")[0])
+        { axios.get(APItimes+this.state.newReservationDate.toISOString().split("T")[0])
             .then((response) => {
                 this.setState({
                     'dataTimes': response.data,
@@ -100,6 +141,8 @@ class App extends React.Component {
                 //console.log(response.headers);
                 //console.log(response.config);
             });
+        this.state.newReservationTime="nezvoleny cas";
+        }
 
 
 
@@ -179,30 +222,15 @@ class App extends React.Component {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     createNew = () => {
         const axios = require('axios').default;
 
         axios({
             method: 'post',
             url: 'http://localhost:8080/reservations',
+            timeout: 15000,
             data: {
+
                 "reservationDate":  this.state.newReservationDate.toISOString(),
                 "reservationTime": this.state.newReservationTime,
                 "firstName": this.state.newFirstName,
@@ -216,8 +244,45 @@ class App extends React.Component {
             }
         }).then((response) => {
             console.log(response);
+
+
+                this.setState({
+                    alert: (
+                        <SweetAlert
+                            success
+                            confirmBtnText="OK"
+                            confirmBtnBsStyle="primary"
+                            title="Registrace byla zapsána"
+                            onConfirm={() => {
+                                this.setState({ alert: null });
+                            }}
+                        >
+
+                        </SweetAlert>
+                    ),
+                });
+
+
+
         }, (error) => {
             console.log(error);
+
+                this.setState({
+                    alert: (
+                        <SweetAlert
+                            danger
+                            confirmBtnText="OK"
+                            confirmBtnBsStyle="danger"
+                            title="Nepodařilo se zapsat registraci."
+                            onConfirm={() => {
+
+                                this.setState({ alert: null });
+                            }}
+                        >
+
+                        </SweetAlert>
+                    ),
+                });
 
 
         })
@@ -236,6 +301,7 @@ class App extends React.Component {
 
 
         return (
+
             <Container>
                 <h1>Web app</h1>
 
@@ -357,13 +423,24 @@ class App extends React.Component {
                             </Form.Group>
 
                             <Button variant="primary" onClick={this.createNew} type="submit">Create</Button>
+                            <Form.Group>
+                                {this.state.alert}
+                            </Form.Group>
                         </Form>
                     </Card.Body>
                 </Card>
 
 
+
+
+
             </Container>
+
+
+
         );
+
+
     }
 }
 
