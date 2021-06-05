@@ -57,10 +57,10 @@ class App extends React.Component {
 
 
 
-
-            newReservationDate:new Date(2021,4,5,20,0,0),
+            newReservationDate:new Date(),
+            //newReservationDate:new Date(2021,4,5,20,0,0),
             dateSelect:"",
-            newReservationTime:"zvolte den",
+            newReservationTime:"zvolte čas",
             newFirstName: "",
             newLastName: "",
             newPersonIdNumber: "",
