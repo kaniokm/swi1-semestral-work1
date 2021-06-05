@@ -1,4 +1,4 @@
-import React, {useState, Component} from "react";
+import React, {useState, Component, useRef} from "react";
 import {Button, Card, Col, Container, Form, ListGroup, Row} from "react-bootstrap";
 
 import BaseSelect from 'react-select'
@@ -22,12 +22,16 @@ const optionsNationality = [
     { value: '--', label: 'Cizinec' }
     ]
 
+
+
+
 const Select = props => (
     <FixRequiredSelect
         {...props}
         SelectComponent={BaseSelect}
 
     />
+
 
 
 );
@@ -48,14 +52,15 @@ class App extends React.Component {
             dataTimes: [],
             error: null,
             errors: [],
+            selectedValue: {label: 'Default value', key : '001'},
 
 
 
 
 
             newReservationDate:new Date(2021,4,5,20,0,0),
-
-            newReservationTime:"wrong",
+            dateSelect:"",
+            newReservationTime:"zvolte den",
             newFirstName: "",
             newLastName: "",
             newPersonIdNumber: "",
@@ -95,6 +100,7 @@ class App extends React.Component {
                 //console.log(response.headers);
                 //console.log(response.config);
             });
+
 
 
     }
@@ -148,6 +154,9 @@ class App extends React.Component {
 
 
 
+
+
+
     onChange = (e, name) => {
 
 
@@ -156,6 +165,24 @@ class App extends React.Component {
             [name]: e
         })
     }
+
+
+    onChangeDate = (e, name) => {
+
+
+        //console.log("---", e, name)
+        this.setState({
+            [name]: e
+        })
+        this.state.newReservationTime=null
+    }
+
+
+
+
+
+
+
 
 
 
@@ -191,7 +218,9 @@ class App extends React.Component {
             console.log(response);
         }, (error) => {
             console.log(error);
-        });
+
+
+        })
     }
 
 
@@ -218,8 +247,8 @@ class App extends React.Component {
                     <Card.Body>
                         <Card.Title>Vytvořte novou rezervaci</Card.Title>
                         <Form >
-
-                            <Form.Group controlId="firstNameId">
+                            <Form.Row>
+                            <Form.Group as={Col} controlId="firstNameId">
                                 Zadejte jméno
                                 <Form.Control
                                     required
@@ -230,7 +259,7 @@ class App extends React.Component {
                                 />
 
                             </Form.Group>
-                            <Form.Group controlId="lastNameId">
+                            <Form.Group as={Col} controlId="lastNameId">
                                 Zadejte příjmení
                                 <Form.Control
                                     required
@@ -240,6 +269,7 @@ class App extends React.Component {
                                     onChange={(e) => this.onChange(e.target.value, 'newLastName')}
                                 />
                             </Form.Group>
+                                </Form.Row>
 
                             <Form.Group controlId="personId">
                                 Zadejte rodné číslo
@@ -293,6 +323,7 @@ class App extends React.Component {
                             <Form.Group controlId="nationalityId">
                                 Vyberte národnost
                                 <Select
+
                                     required
                                     name="form-field-name"
                                     options={optionsNationality}
@@ -302,10 +333,10 @@ class App extends React.Component {
                                 </Form.Group>
 
                             <Form.Group controlId="reservationDateId">
-                                Zvolte den rezervace<br/>
+                                Zvolte den rezervace, poté se zobrazí volné časy<br/>
                                 <DatePicker
                                     selected={this.state.newReservationDate}
-                                    onChange={(e) => this.onChange((e), 'newReservationDate')}
+                                    onChange={(e) => this.onChangeDate((e), 'newReservationDate')}
                                 />
 
                             </Form.Group>
@@ -313,8 +344,12 @@ class App extends React.Component {
                             <Form.Group controlId="reservationTimeId" >
                                 Vyberte čas (pokud není čas k vybrání, vyberte jiný den)
                                 <Select
+                                    name="dateSelect"
                                     required
-                                    name="form-field-name"
+                                    placeholder={this.state.newReservationTime}
+
+
+
                                     options={this.state.dataTimes}
                                     onChange={(e) => this.onChange(e.value, 'newReservationTime')}
                                 />

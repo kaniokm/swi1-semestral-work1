@@ -18,10 +18,16 @@ package com.greglturnquist.payroll;
 import com.greglturnquist.validation.ValidReservation;
 //import com.greglturnquist.validation.ValidCzechPersonIdNumber;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.*;
 
 /**
@@ -54,8 +60,10 @@ public class Reservation {
 
 	@NotBlank(message = "Registration plate is mandatory")private String plateNumber;
 
+	@NotNull
 	private LocalDate reservationDate;
 
+	@NotNull
 	private LocalTime reservationTime;
 
 	private String note;
