@@ -15,14 +15,14 @@
  */
 package com.greglturnquist.payroll;
 
-import java.sql.Time;
-import java.sql.Timestamp;
+import com.greglturnquist.validation.ValidReservation;
+//import com.greglturnquist.validation.ValidCzechPersonIdNumber;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 
 /**
  * @author Greg Turnquist
@@ -30,6 +30,7 @@ import javax.validation.constraints.NotBlank;
 // tag::code[]
 @Entity // <1>
 
+@ValidReservation
 public class Reservation {
 
 
@@ -38,11 +39,18 @@ public class Reservation {
 
 	@NotBlank(message = "Last name is mandatory")private String lastName;
 
-	@NotBlank(message = "Personal identification number is mandatory")private String personIdNumber;
+	@NotBlank(message = "Personal identification number is mandatory")
+//	@Pattern(regexp="^[0-9]{6}\\/?[0-9]{4}$",message="unallowed symbols or lenght")
+	//@ValidCzechPersonIdNumber(message = "czech id number is incorrect")
+	private String personIdNumber;
 
-	@NotBlank (message = "Phone is mandatory")private String phone;
+	@NotBlank (message = "Phone is mandatory")
+	@Pattern(regexp="^[+]?[()\0-9. -]{9,}$",message="uncorrect phone pattern")
+	private String phone;
 
-	@NotBlank(message = "Email is mandatory")private String email;
+	@NotBlank(message = "Email is mandatory")
+	@Email(message = "Email have to be valid")
+	private String email;
 
 	@NotBlank(message = "Registration plate is mandatory")private String plateNumber;
 
@@ -199,14 +207,6 @@ public class Reservation {
 				", nationality='" + nationality + '\'' +
 				'}';
 	}
-
-
-
-
-
-
-
-
 
 }
 // end::code[]

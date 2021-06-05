@@ -161,7 +161,11 @@ public class ReservationController {
     @PostMapping("/reservations")
     Reservation newOrder(@Valid @RequestBody Reservation newReservation)
     {
-
+        //System.out.println("validated");
+        if (newReservation.getNationality().equals("cz") && !newReservation.getPersonIdNumber().contains("/")){
+            newReservation.setPersonIdNumber(newReservation.getPersonIdNumber().substring(0,6)+"/"+newReservation.getPersonIdNumber().substring(6));
+            log.info("added missing '/' to czech personIdNumber");
+        }
         return repository.save(newReservation);
     }
 
