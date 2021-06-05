@@ -253,6 +253,7 @@ class App extends React.Component {
                             confirmBtnText="OK"
                             confirmBtnBsStyle="primary"
                             title="Registrace byla zapsána"
+                            timeout="60000"
                             onConfirm={() => {
                                 this.setState({ alert: null });
                             }}
@@ -273,6 +274,7 @@ class App extends React.Component {
                             danger
                             confirmBtnText="OK"
                             confirmBtnBsStyle="danger"
+                            timeout="60000"
                             title="Nepodařilo se zapsat registraci."
                             onConfirm={() => {
 
@@ -285,6 +287,27 @@ class App extends React.Component {
                 });
 
 
+        }).catch(error => {
+
+            console.log(error);
+            this.setState({
+                alert: (
+
+                    <SweetAlert
+                        danger
+                        confirmBtnText="OK"
+                        confirmBtnBsStyle="danger"
+                        timeout="60000"
+                        title="Nepodařilo se zapsat registraci."
+                        onConfirm={() => {
+
+                            this.setState({ alert: null });
+                        }}
+                    >
+
+                    </SweetAlert>
+                ),
+            });
         })
     }
 
@@ -391,7 +414,7 @@ class App extends React.Component {
                                 <Select
 
                                     required
-                                    name="form-field-name"
+
                                     options={optionsNationality}
                                     onChange={(e) => this.onChange(e.value, 'newNationality')}
                                 />
@@ -410,7 +433,7 @@ class App extends React.Component {
                             <Form.Group controlId="reservationTimeId" >
                                 Vyberte čas (pokud není čas k vybrání, vyberte jiný den)
                                 <Select
-                                    name="dateSelect"
+
                                     required
                                     placeholder={this.state.newReservationTime}
 
@@ -422,7 +445,7 @@ class App extends React.Component {
 
                             </Form.Group>
 
-                            <Button variant="primary" onClick={this.createNew} type="submit">Create</Button>
+                            <Button variant="primary" onClick={this.createNew} type="button">Create</Button>
                             <Form.Group>
                                 {this.state.alert}
                             </Form.Group>
