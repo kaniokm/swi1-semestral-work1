@@ -93,11 +93,14 @@ class App extends React.Component {
             errors: [],
             selectedValue: {label: 'Default value', key : '001'},
             persons:"",
+			phoneValidationMessage: null,
+			czPersonIdValidationMessage: null,
+			emailValidationMessage: null,
+			
 
 
-
-
-            newReservationDate:new Date(2021,4,5,20,0,0),
+            newReservationDate:new Date(),
+			//newReservationDate:new Date(2021,4,5,20,0,0),
             dateSelect:"",
             newReservationTime:null,
             newFirstName: "",
@@ -143,9 +146,8 @@ class App extends React.Component {
             });
         this.state.newReservationTime="nezvoleny cas";
         }
-
-
-
+		
+	
     }
 
 
@@ -198,20 +200,78 @@ class App extends React.Component {
 
 
 
-
-
     onChange = (e, name) => {
-
-
         //console.log("---", e, name)
         this.setState({
             [name]: e
         })
     }
+	
+	
+    onChangeEmail = (e, name) => {
+        //console.log("---", e, name)
+        this.setState({
+            [name]: e
+        })
+		
+		if (!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(e))
+			this.state.emailValidationMessage='Invalid email address';
+		else
+			this.state.emailValidationMessage='';
+    }
+	
+
+    onChangePhoneNumber = (e, name) => {
+        //console.log("---", e, name)
+        this.setState({
+            [name]: e
+        })	
+			
+		if (!/^[+]?[()\0-9. -]{9,}$/i.test(e))
+			this.state.phoneValidationMessage='Invalid phone number';
+		else
+			this.state.phoneValidationMessage='';
+    }
+	
+	
+	onChangePersonIdNumber = (e, name) => {
+	    //console.log("---", e, name)
+        this.setState({
+            [name]: e
+        })
+				
+		if(this.state.newNationality === 'cz' )
+		{
+			if (!/^[0-9]{6}\/?[0-9]{4}$/i.test(e)){
+				this.state.czPersonIdValidationMessage= 'Incorrect czech Person ID pattern';
+			}else{
+		
+				var number = e;
+				 
+				if ( /* contains */(number.indexOf("/") != -1)){
+					number = /* replace */ number.split("/").join("");
+				}
+					
+				if (number.length !== 10) {
+					this.state.czPersonIdValidationMessage='Incorrect Lenght';
+				}else{
+					
+					if ( /* parseInt */parseInt(number.substring(4, 6)) < 1 || /* parseInt */ parseInt(number.substring(4, 6)) > 31 || /* parseInt */ parseInt(number.substring(2, 4)) < 1 || /* parseInt */ parseInt(number.substring(2, 4)) > 62 || ( /* parseInt */parseInt(number.substring(2, 4)) > 12 && /* parseInt */ parseInt(number.substring(2, 4)) < 51) || (( /* parseInt */parseInt(number.substring(0, 9)) % 11) !== /* parseInt */ parseInt(number.substring(9, 10))))
+					{
+						this.state.czPersonIdValidationMessage= 'Incorrect';
+					}else{
+						this.state.czPersonIdValidationMessage= '';
+					}
+				}
+			}
+		}else{
+			this.state.czPersonIdValidationMessage= '';
+		}
+
+    }
 
 
     onChangeDate = (e, name) => {
-
 
         //console.log("---", e, name)
         this.setState({
@@ -256,6 +316,7 @@ class App extends React.Component {
                             timeout="60000"
                             onConfirm={() => {
                                 this.setState({ alert: null });
+								window.location.reload();
                             }}
                         >
 
@@ -359,6 +420,14 @@ class App extends React.Component {
                                 />
                             </Form.Group>
                                 </Form.Row>
+								<Form.Group controlId="nationalityId">
+                                Vyberte národnost
+                                <Select
+                                    required
+                                    options={optionsNationality}
+                                    onChange={(e) => this.onChange(e.value, 'newNationality')}
+                                />
+                                </Form.Group>
 
                             <Form.Group controlId="personId">
                                 Zadejte rodné číslo
@@ -366,9 +435,11 @@ class App extends React.Component {
                                     required
                                     type="text"
                                     placeholder="Enter personID"
-                                    onChange={(e) => this.onChange(e.target.value, 'newPersonIdNumber')}
+                                    onChange={(e) => this.onChangePersonIdNumber(e.target.value, 'newPersonIdNumber')}
+									//onChange={this.handleChange}
                                     value={this.state.newPersonIdNumber}
                                 />
+								<p style={{ color: 'red' }}>{this.state.czPersonIdValidationMessage}</p>
                             </Form.Group>
                             <Form.Group controlId="phoneId">
                                 Zadejte telefon
@@ -376,9 +447,9 @@ class App extends React.Component {
                                     required
                                     type="text"
                                     placeholder="Enter phone"
-                                    onChange={(e) => this.onChange(e.target.value, 'newPhone')}
+                                    onChange={(e) => this.onChangePhoneNumber(e.target.value, 'newPhone')}
                                     value={this.state.newPhone}
-                                />
+                                /><p style={{ color: 'red' }}>{this.state.phoneValidationMessage}</p>
                             </Form.Group>
                             <Form.Group controlId="emailId">
                                 Zadejte email
@@ -386,9 +457,9 @@ class App extends React.Component {
                                     required
                                     type="email"
                                     placeholder="Enter email"
-                                    onChange={(e) => this.onChange(e.target.value, 'newEmail')}
+                                    onChange={(e) => this.onChangeEmail(e.target.value, 'newEmail')}
                                     value={this.state.newEmail}
-                                />
+                                /><p style={{ color: 'red' }}>{this.state.emailValidationMessage}</p>
                             </Form.Group>
                             <Form.Group controlId="plateNumberId">
                                 Zadejte registrační značku
@@ -409,18 +480,7 @@ class App extends React.Component {
                                     value={this.state.newNote}
                                 />
                             </Form.Group>
-                            <Form.Group controlId="nationalityId">
-                                Vyberte národnost
-                                <Select
-
-                                    required
-
-                                    options={optionsNationality}
-                                    onChange={(e) => this.onChange(e.value, 'newNationality')}
-                                />
-
-                                </Form.Group>
-
+                         
                             <Form.Group controlId="reservationDateId">
                                 Zvolte den rezervace, poté se zobrazí volné časy<br/>
                                 <DatePicker
@@ -437,22 +497,26 @@ class App extends React.Component {
                                     required
                                     placeholder={this.state.newReservationTime}
 
-
-
                                     options={this.state.dataTimes}
                                     onChange={(e) => this.onChange(e.value, 'newReservationTime')}
                                 />
 
                             </Form.Group>
 
-                            <Button variant="primary" onClick={this.createNew} type="button">Create</Button>
+                            <Button variant="primary" 
+							disabled={
+								this.state.phoneValidationMessage !== '' || this.state.czPersonIdValidationMessage !== '' || 
+								this.state.emailValidationMessage !== '' || 
+								this.state.newReservationTime === "nezvoleny cas" || this.state.newFirstName.trim() === ''|| 
+								this.state.newLastName.trim() === ''|| this.state.newPlateNumber.trim() === ''
+							}
+							onClick={this.createNew} type="button">Vytvořit</Button>
                             <Form.Group>
                                 {this.state.alert}
                             </Form.Group>
                         </Form>
                     </Card.Body>
                 </Card>
-
 
 
 
