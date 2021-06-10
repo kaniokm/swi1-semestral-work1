@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ReservationValidator.class)
 public @interface ValidReservation {
-    String message() default  "Person id number is incorrect, or selected time and date is already picked";
+    String message() default  "Person id number is incorrect, or selected time and date is already picked, or invalid nationality";
     Class<?>[] groups() default {};
     public abstract Class<? extends Payload>[] payload() default {};
 }

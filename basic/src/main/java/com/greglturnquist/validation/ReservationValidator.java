@@ -77,6 +77,9 @@ public class ReservationValidator implements ConstraintValidator<ValidReservatio
                 return false;
             else
             	return true;
+        }else if (!reservation.getNationality().equals("--")) {
+            System.out.println("invalid nationality");
+            return false;
         }
         return true;
     }
