@@ -3,14 +3,14 @@ package cz.osu.guiJavaFx;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-class EditReservationControllerTest {
+class ValidationsTest {
 
 
     @org.junit.jupiter.api.Test
     void validateEmail1() {
         boolean ans = true;
         String num = "email@seznam.em";
-        boolean value =  EditReservationController.validateEmail(num);
+        boolean value =  Validations.validateEmail(num);
         assertEquals(ans,value);
     }
 
@@ -18,7 +18,7 @@ class EditReservationControllerTest {
     void validateEmail2() {
         boolean ans = false;
         String num = "email";
-        boolean value =  EditReservationController.validateEmail(num);
+        boolean value =  Validations.validateEmail(num);
         assertEquals(ans,value);
     }
 
@@ -26,7 +26,7 @@ class EditReservationControllerTest {
     void validateEmail3() {
         boolean ans = false;
         String num = "email@seznam";
-        boolean value =  EditReservationController.validateEmail(num);
+        boolean value =  Validations.validateEmail(num);
         assertEquals(ans,value);
     }
 
@@ -35,7 +35,7 @@ class EditReservationControllerTest {
         boolean ans = false;
         boolean val;
         String num = "@seznam.ca";
-        boolean value =  EditReservationController.validateEmail(num);
+        boolean value =  Validations.validateEmail(num);
         assertEquals(ans,value);
     }
 
@@ -43,7 +43,7 @@ class EditReservationControllerTest {
     void validateEmail5() {
         boolean ans = false;
         String num = "email@seznam.c";
-        boolean value =  EditReservationController.validateEmail(num);
+        boolean value =  Validations.validateEmail(num);
         assertEquals(ans,value);
     }
 
@@ -51,7 +51,7 @@ class EditReservationControllerTest {
     void validateEmail6() {
         boolean ans = false;
         String num = "email@@seznam.cz";
-        boolean value =  EditReservationController.validateEmail(num);
+        boolean value =  Validations.validateEmail(num);
         assertEquals(ans,value);
     }
 
@@ -61,7 +61,7 @@ class EditReservationControllerTest {
     void validatePhone() {
         boolean ans = true;
         String num = "+420 777 112 233";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -69,7 +69,7 @@ class EditReservationControllerTest {
     void validatePhone0() {
         boolean ans = true;
         String num = "+420 777 11 22 33";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -77,7 +77,7 @@ class EditReservationControllerTest {
     void validatePhone1() {
         boolean ans = true;
         String num = "777 112 233, 123 456 789";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -85,7 +85,7 @@ class EditReservationControllerTest {
     void validatePhone2() {
         boolean ans = true;
         String num = "+420 777112233";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -93,7 +93,7 @@ class EditReservationControllerTest {
     void validatePhone3() {
         boolean ans = true;
         String num = "777 11 22 33";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -101,7 +101,7 @@ class EditReservationControllerTest {
     void validatePhone4() {
         boolean ans = false;
         String num = "asd";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -109,7 +109,7 @@ class EditReservationControllerTest {
     void validatePhone5() {
         boolean ans = false;
         String num = "123 456 1w8";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -117,7 +117,7 @@ class EditReservationControllerTest {
     void validatePhone6() {
         boolean ans = true;
         String num = "00420 123 456 180";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -125,7 +125,7 @@ class EditReservationControllerTest {
     void validatePhone7() {
         boolean ans = true;
         String num = "+420 777 112 233, +420 123 456 789";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -133,7 +133,7 @@ class EditReservationControllerTest {
     void validatePhone8() {
         boolean ans = false;
         String num = "+420 777 112 233, +420 I23 456 789";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -141,7 +141,7 @@ class EditReservationControllerTest {
     void validatePhone9() {
         boolean ans = true;
         String num = "+420 777 112 233, 00420 123 456 789";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -149,7 +149,7 @@ class EditReservationControllerTest {
     void validatePhone10() {
         boolean ans = true;
         String num = "00420777112233";
-        boolean value =  EditReservationController.validatePhone(num);
+        boolean value =  Validations.validatePhone(num);
         assertEquals(ans,value);
     }
 
@@ -160,7 +160,7 @@ class EditReservationControllerTest {
     void validateCZSyntaxPersonId() {
         boolean ans = true;
         String rc = "8501261153";
-        boolean value =  EditReservationController.validateCzechBirthNumberSyntax(rc);
+        boolean value =  Validations.validateCzechBirthNumberSyntax(rc);
         assertEquals(ans,value);
     }
 
@@ -168,7 +168,7 @@ class EditReservationControllerTest {
     void validateCZSyntaxPersonId2() {
         boolean ans = true;
         String rc = "850126/1153";
-        boolean value =  EditReservationController.validateCzechBirthNumberSyntax(rc);
+        boolean value =  Validations.validateCzechBirthNumberSyntax(rc);
         assertEquals(ans,value);
     }
 
@@ -176,7 +176,7 @@ class EditReservationControllerTest {
     void validateCZSyntaxPersonId3() {
         boolean ans = false;
         String rc = "850126//1153";
-        boolean value =  EditReservationController.validateCzechBirthNumberSyntax(rc);
+        boolean value =  Validations.validateCzechBirthNumberSyntax(rc);
         assertEquals(ans,value);
     }
 
@@ -184,7 +184,7 @@ class EditReservationControllerTest {
     void validateCZSyntaxPersonId4() {
         boolean ans = false;
         String rc = "8501261/153";
-        boolean value =  EditReservationController.validateCzechBirthNumberSyntax(rc);
+        boolean value =  Validations.validateCzechBirthNumberSyntax(rc);
         assertEquals(ans,value);
     }
 
@@ -192,7 +192,7 @@ class EditReservationControllerTest {
     void validateCZSyntaxPersonId5() {
         boolean ans = false;
         String rc = "8501261 153";
-        boolean value =  EditReservationController.validateCzechBirthNumberSyntax(rc);
+        boolean value =  Validations.validateCzechBirthNumberSyntax(rc);
         assertEquals(ans,value);
     }
 
@@ -200,7 +200,7 @@ class EditReservationControllerTest {
     void validateCZSyntaxPersonId6() {
         boolean ans = false;
         String rc = "850I161153";
-        boolean value =  EditReservationController.validateCzechBirthNumberSyntax(rc);
+        boolean value =  Validations.validateCzechBirthNumberSyntax(rc);
         assertEquals(ans,value);
     }
 
@@ -208,7 +208,7 @@ class EditReservationControllerTest {
     void validateCZSyntaxPersonId7() {
         boolean ans = false;
         String rc = "85016115389";
-        boolean value =  EditReservationController.validateCzechBirthNumberSyntax(rc);
+        boolean value =  Validations.validateCzechBirthNumberSyntax(rc);
         assertEquals(ans,value);
     }
 
@@ -216,7 +216,7 @@ class EditReservationControllerTest {
     void validateCZSyntaxPersonId8() {
         boolean ans = false;
         String rc = "aaaaaaaaaa";
-        boolean value =  EditReservationController.validateCzechBirthNumberSyntax(rc);
+        boolean value =  Validations.validateCzechBirthNumberSyntax(rc);
         assertEquals(ans,value);
     }
 
@@ -224,7 +224,7 @@ class EditReservationControllerTest {
     void validateCZSyntaxPersonId9() {
         boolean ans = false;
         String rc = "8501%61153";
-        boolean value =  EditReservationController.validateCzechBirthNumberSyntax(rc);
+        boolean value =  Validations.validateCzechBirthNumberSyntax(rc);
         assertEquals(ans,value);
     }
 
@@ -234,7 +234,7 @@ class EditReservationControllerTest {
     void validateCZPersonId1() {
         boolean ans = true;
         String rc = "9851010015"; //dobre zena
-        boolean value =  EditReservationController.validateCzechBirthNumberValue(rc);
+        boolean value =  Validations.validateCzechBirthNumberValue(rc);
         assertEquals(ans,value);
     }
 
@@ -242,7 +242,7 @@ class EditReservationControllerTest {
     void validateCZPersonId1a() {
         boolean ans = true;
         String rc = "976231/0019"; //dobre zena2
-        boolean value =  EditReservationController.validateCzechBirthNumberValue(rc);
+        boolean value =  Validations.validateCzechBirthNumberValue(rc);
         assertEquals(ans,value);
     }
 
@@ -250,7 +250,7 @@ class EditReservationControllerTest {
     void validateCZPersonId1b() {
         boolean ans = true;
         String rc = "8501010012"; //dobre muz
-        boolean value =  EditReservationController.validateCzechBirthNumberValue(rc);
+        boolean value =  Validations.validateCzechBirthNumberValue(rc);
         assertEquals(ans,value);
     }
 
@@ -258,7 +258,7 @@ class EditReservationControllerTest {
     void validateCZPersonId1c() {
         boolean ans = true;
         String rc = "851231/0015"; //dobre muz2
-        boolean value =  EditReservationController.validateCzechBirthNumberValue(rc);
+        boolean value =  Validations.validateCzechBirthNumberValue(rc);
         assertEquals(ans,value);
     }
 
@@ -266,7 +266,7 @@ class EditReservationControllerTest {
     void validateCZPersonId2() {
         boolean ans = true;
         String rc = "850126/1153";
-        boolean value =  EditReservationController.validateCzechBirthNumberValue(rc);
+        boolean value =  Validations.validateCzechBirthNumberValue(rc);
         assertEquals(ans,value);
     }
 
@@ -274,7 +274,7 @@ class EditReservationControllerTest {
     void validateCZPersonId3() {
         boolean ans = false;
         String rc = "0000000000";
-        boolean value =  EditReservationController.validateCzechBirthNumberValue(rc);
+        boolean value =  Validations.validateCzechBirthNumberValue(rc);
         assertEquals(ans,value);
     }
 
@@ -282,7 +282,7 @@ class EditReservationControllerTest {
     void validateCZPersonId4() {
         boolean ans = false;
         String rc = "8513261153";//saptne den
-        boolean value =  EditReservationController.validateCzechBirthNumberValue(rc);
+        boolean value =  Validations.validateCzechBirthNumberValue(rc);
         assertEquals(ans,value);
     }
 
@@ -290,7 +290,7 @@ class EditReservationControllerTest {
     void validateCZPersonId5() {
         boolean ans = false;
         String rc = "8501321103";//spatne mesic
-        boolean value =  EditReservationController.validateCzechBirthNumberValue(rc);
+        boolean value =  Validations.validateCzechBirthNumberValue(rc);
         assertEquals(ans,value);
     }
 
@@ -298,7 +298,7 @@ class EditReservationControllerTest {
     void validateCZPersonId6() {
         boolean ans = false;
         String rc = "8501311103"; //spatne kontrolni modulo
-        boolean value =  EditReservationController.validateCzechBirthNumberValue(rc);
+        boolean value =  Validations.validateCzechBirthNumberValue(rc);
         assertEquals(ans,value);
     }
 
@@ -307,7 +307,7 @@ class EditReservationControllerTest {
     void validateCZPersonId7() {
         boolean ans = false;
         String rc = "850161106";//spatne mesic zena
-        boolean value =  EditReservationController.validateCzechBirthNumberValue(rc);
+        boolean value =  Validations.validateCzechBirthNumberValue(rc);
         assertEquals(ans,value);
     }
 
@@ -315,7 +315,7 @@ class EditReservationControllerTest {
     void validateCZPersonId8() {
         boolean ans = false;
         String rc = "8563300010";//spatne mesic zena2
-        boolean value =  EditReservationController.validateCzechBirthNumberValue(rc);
+        boolean value =  Validations.validateCzechBirthNumberValue(rc);
         assertEquals(ans,value);
     }
 }
