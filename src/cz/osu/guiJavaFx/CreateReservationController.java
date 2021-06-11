@@ -57,7 +57,7 @@ public class CreateReservationController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //System.out.println("new inicized");
 
-        ObservableList<LocalTime> alreadyListedTimes =  DatabaseConnect.getListOfReservedTimeForSelectedDay(DbController.selectedDate);
+        ObservableList<LocalTime> alreadyListedTimes =  DatabaseConnect.getListOfReservedTimeForSelectedDay(MainWindowController.selectedDate);
 
         ObservableList<LocalTime> showList = defaultListOfTimes;
         showList.removeAll(alreadyListedTimes);
@@ -73,44 +73,17 @@ public class CreateReservationController implements Initializable {
 
 
     public void requestCreateNewReservation(ActionEvent actionEvent) {
-            if (tfName.getText().trim().isEmpty() || tfSurname.getText().trim().isEmpty()
-                    || tfPersonIdNumber.getText().trim().isEmpty() || tfPlateNumber.getText().trim().isEmpty()
-                    || (tfPhone.getText().trim().isEmpty() || tfEmail.getText().trim().isEmpty())
-                    || comBoxReservedTime.getValue() == null) {
-                ShowErrorAlert("Error", "Vyplňte prosím všechna důležitá pole !!!");
-            } else {
-                if (!EditReservationController.validatePhone(tfPhone.getText())) {
-                    ShowErrorAlert("Error", "Neplatné telefoní číslo !!!");
-                    return;
-                }
-                if (!EditReservationController.validateEmail(tfEmail.getText())) {
-                    ShowErrorAlert("Error", "Neplatný email !!!");
-                    return;
-                }
-                if (rdCz.isSelected()){
-                    if (!EditReservationController.validateCzechBirthNumberSyntax(tfPersonIdNumber.getText())) {
-                        ShowErrorAlert("Error", "Neplatná syntaxe českého rodného čísla !!! \nPlatné je např.: 580123/1158, nebo 5801231158");
-                        return;
-                    }else {
-                        if (!EditReservationController.validateCzechBirthNumberValue(tfPersonIdNumber.getText())){
-                            ShowErrorAlert("Error","Neplatné české rodné číslo !!! \nPlatné je např.: 580123/1158");
-                            return;
-                        }
-                        if (!tfPersonIdNumber.getText().contains("/")) {
-                            tfPersonIdNumber.setText(tfPersonIdNumber.getText().substring(0, 6) + "/" + tfPersonIdNumber.getText().substring(6));
-                        }
-                    }
-                }
+            Validations.validateInputs(tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz);
 
                 URL url = null;
                 try {
                     url = new URL("http://localhost:8080/reservations");
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("POST");
-                    String date =DbController.selectedDate.toString();
+                    String date = MainWindowController.selectedDate.toString();
 
                     String json = "{\n" +
-                            "\"reservationDate\": \"" +DbController.selectedDate+"\",\n" +
+                            "\"reservationDate\": \"" + MainWindowController.selectedDate+"\",\n" +
                             "\"reservationTime\": \"" +comBoxReservedTime.getValue()+":00"+"\",\n" +
                             "\"firstName\": \"" +tfName.getText()+"\",\n" +
                             "\"lastName\": \"" +tfSurname.getText()+"\",\n" +
@@ -169,22 +142,16 @@ public class CreateReservationController implements Initializable {
 
                 Stage stage = (Stage) btnClose.getScene().getWindow();
                 stage.close();
-            }
+
 
     }
 
-    private void ShowErrorAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+
 
     public void reloadDate() {
         System.out.println("reload");
 
-        ObservableList<LocalTime> todayListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(DbController.selectedDate);
+        ObservableList<LocalTime> todayListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(MainWindowController.selectedDate);
         System.out.println(todayListedTimes);
 
 
@@ -201,6 +168,9 @@ public class CreateReservationController implements Initializable {
         System.out.println(listedTimes);
         comBoxReservedTime.setItems(listedTimes);
     }
+
+
+
 
 
 

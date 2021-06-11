@@ -4,13 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import cz.osu.guiJavaFx.*;
-
-import java.io.IOException;
-
-
 
 
 public class Main extends Application {
@@ -18,7 +12,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        Parent root = FXMLLoader.load(getClass().getResource("guiJavaFx/DbWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("guiJavaFx/MainWindow.fxml"));
         primaryStage.setTitle("Database");
         primaryStage.setScene(new Scene(root, 1200, 500));
         primaryStage.show();

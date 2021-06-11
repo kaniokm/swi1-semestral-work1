@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class DbController implements Initializable {
+public class MainWindowController implements Initializable {
     @FXML
     private javafx.scene.control.TableView<DatabaseData> tableView;
     @FXML
