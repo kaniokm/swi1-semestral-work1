@@ -290,7 +290,7 @@ public class MakeHttpReservationTests {
 
     private boolean delete(LocalDate date, LocalTime lt) throws IOException {
         Reservation dd = null;
-        ObservableList<Reservation> reservationList = RequestUtils.getDatabaseDataListForSelectedDay(date);
+        ObservableList<Reservation> reservationList = RequestUtils.getReservationListForSelectedDay(date);
         for (Reservation reservation : reservationList) {
             System.out.println(reservation);
             if (reservation.getReservationTime()==lt){

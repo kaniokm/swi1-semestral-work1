@@ -70,14 +70,12 @@ public class CreateReservationController implements Initializable {
 
 
     public void requestCreateNewReservation(ActionEvent actionEvent) {
-            Validations.validateInputs(tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz);
-
-
-                RequestUtils.requestCreateNewReservation(tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz, tfNote);
+         if   (Validations.validateInputs(tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz))
+         {  RequestUtils.requestCreateNewReservation(tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz, tfNote);
 
 
                 Stage stage = (Stage) btnClose.getScene().getWindow();
-                stage.close();
+                stage.close();}
 
 
     }

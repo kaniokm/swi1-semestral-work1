@@ -12,10 +12,6 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
@@ -84,7 +80,7 @@ public class EditReservationController implements Initializable {
         listedTimes.addAll(todaysListedTimes);
         listedTimes.remove(selectedTime);
 
-        Reservation data = RequestUtils.getSelectedDatabaseDataById(selectedId);
+        Reservation data = RequestUtils.getSelectedReservationById(selectedId);
 
         tfName.setText(data.getName());
         tfSurname.setText(data.getSurname());
@@ -110,14 +106,14 @@ public class EditReservationController implements Initializable {
 
 
     public void requestEditReservation(ActionEvent actionEvent) {
-        Validations.validateInputs(tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz);
+      if( Validations.validateInputs(tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz))
 
-            RequestUtils.requestEditReservation(datePicker, tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz, tfNote);
+      {  RequestUtils.requestEditReservation(datePicker, tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz, tfNote);
 
 
 
             Stage stage = (Stage) btnClose.getScene().getWindow();
-            stage.close();
+            stage.close();}
 
     }
 

@@ -44,35 +44,39 @@ public class Validations {
     }
 
 
-    public static void validateInputs(TextField tfName, TextField tfSurname, TextField tfPersonIdNumber, TextField tfPlateNumber, TextField tfPhone, TextField tfEmail, ComboBox<LocalTime> comBoxReservedTime, RadioButton rdCz ){
+    public static boolean validateInputs(TextField tfName, TextField tfSurname, TextField tfPersonIdNumber, TextField tfPlateNumber, TextField tfPhone, TextField tfEmail, ComboBox<LocalTime> comBoxReservedTime, RadioButton rdCz ){
         if (tfName.getText().trim().isEmpty() || tfSurname.getText().trim().isEmpty()
                 || tfPersonIdNumber.getText().trim().isEmpty() || tfPlateNumber.getText().trim().isEmpty()
                 || (tfPhone.getText().trim().isEmpty() || tfEmail.getText().trim().isEmpty())
                 || comBoxReservedTime.getValue() == null) {
             ShowErrorAlert("Error","Vyplňte prosím všechna důležitá pole !!!");
+            return false;
         }
         if (!validatePhone(tfPhone.getText())) {
             ShowErrorAlert("Error","Neplatné telefoní číslo !!!");
-
+            return false;
         }
         if (!validateEmail(tfEmail.getText())) {
             ShowErrorAlert("Error","Neplatný email !!!");
-
+            return false;
         }
         if (rdCz.isSelected()){
             if (!validateCzechBirthNumberSyntax(tfPersonIdNumber.getText())) {
                 ShowErrorAlert("Error","Neplatná syntaxe českého rodného čísla !!! \nPlatné je např.: 580123/1158, nebo 5801231158");
-
+                return false;
             }else {
                 if (!validateCzechBirthNumberValue(tfPersonIdNumber.getText())){
                     ShowErrorAlert("Error","Neplatné české rodné číslo !!! \nPlatné je např.: 580123/1158");
-
+                    return false;
                 }
                 if (!tfPersonIdNumber.getText().contains("/")) {
                     tfPersonIdNumber.setText(tfPersonIdNumber.getText().substring(0, 6) + "/" + tfPersonIdNumber.getText().substring(6));
                 }
+                return true;
             }
         }
+
+        else return true;
     }
 
     private static void ShowErrorAlert(String title, String message) {

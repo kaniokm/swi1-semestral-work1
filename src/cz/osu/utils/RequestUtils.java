@@ -19,10 +19,67 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import static cz.osu.controllers.MainWindowController.selectedId;
 
 public class RequestUtils {
+
+
+    public static void requestDeleteReservation( javafx.scene.control.TableView<Reservation> tableView){
+        try {
+
+
+        int id = tableView.getSelectionModel().getSelectedItem().getId();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Potvrzení smazání.");
+        alert.setHeaderText(null);
+        alert.setContentText("Opravdu chcete smazat vybrané pole?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            try {
+
+                URL url = new URL("http://localhost:8080/reservations/"+id);
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+                con.setConnectTimeout(5000);
+                con.setReadTimeout(5000);
+                con.setRequestMethod("DELETE");
+
+
+                int status = con.getResponseCode();
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer content = new StringBuffer();
+                while ((inputLine = in.readLine()) != null) {
+                    content.append(inputLine);
+                }
+                in.close();
+
+                Reader streamReader = null;
+
+                if (status > 299) {
+                    streamReader = new InputStreamReader(con.getErrorStream());
+                } else {
+                    streamReader = new InputStreamReader(con.getInputStream());
+                }
+
+                con.disconnect();
+
+
+                //tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    } catch (Exception e) {
+        System.out.println("nothing selected");
+    }}
 
 
 
@@ -173,7 +230,7 @@ public class RequestUtils {
 
 
 
-    public static ObservableList<Reservation> getDatabaseDataListForSelectedDay(LocalDate localDate) {
+    public static ObservableList<Reservation> getReservationListForSelectedDay(LocalDate localDate) {
 
 
 
@@ -213,7 +270,7 @@ public class RequestUtils {
 
 
 
-    public static Reservation getSelectedDatabaseDataById(int id) {
+    public static Reservation getSelectedReservationById(int id) {
 
 
         Reservation data = new Reservation();

@@ -14,18 +14,10 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.stage.Modality;
@@ -88,6 +80,7 @@ public class MainWindowController implements Initializable {
 
     public void createWindowEditSelectedReservation(ActionEvent actionEvent) {
         createNewWindow(actionEvent,"EditReservationWindow.fxml","Úprava rezervace:");
+        requestRefresh();
     }
 
     private void createNewWindow(javafx.event.ActionEvent actionEvent, String window,String title){
@@ -118,59 +111,12 @@ public class MainWindowController implements Initializable {
     }
 
     public void deleteSelectedReservation(javafx.event.ActionEvent actionEvent) {
-        int id;
-        URL url;
-        try {
-            id = tableView.getSelectionModel().getSelectedItem().getId();
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Potvrzení smazání.");
-            alert.setHeaderText(null);
-            alert.setContentText("Opravdu chcete smazat vybrané pole?");
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                try {
-
-                    url = new URL("http://localhost:8080/reservations/"+id);
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-                    con.setConnectTimeout(5000);
-                    con.setReadTimeout(5000);
-                    con.setRequestMethod("DELETE");
 
 
-                    int status = con.getResponseCode();
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(con.getInputStream()));
-                    String inputLine;
-                    StringBuffer content = new StringBuffer();
-                    while ((inputLine = in.readLine()) != null) {
-                        content.append(inputLine);
-                    }
-                    in.close();
+                RequestUtils.requestDeleteReservation(tableView);
 
-                    Reader streamReader = null;
 
-                    if (status > 299) {
-                        streamReader = new InputStreamReader(con.getErrorStream());
-                    } else {
-                        streamReader = new InputStreamReader(con.getInputStream());
-                    }
-
-                    con.disconnect();
-                    requestRefresh();
-
-                    //tableView.getItems().removeAll(tableView.getSelectionModel().getSelectedItems());
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (ProtocolException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("nothing selected");
-        }
+        requestRefresh();
 
     }
 
@@ -178,7 +124,7 @@ public class MainWindowController implements Initializable {
 
     public void requestRefresh() {
 
-        ObservableList<Reservation> reservationList = RequestUtils.getDatabaseDataListForSelectedDay(datePicker.getValue());
+        ObservableList<Reservation> reservationList = RequestUtils.getReservationListForSelectedDay(datePicker.getValue());
         showData(reservationList);
 
     }
