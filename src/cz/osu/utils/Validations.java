@@ -1,4 +1,4 @@
-package cz.osu.guiJavaFx;
+package cz.osu.utils;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
@@ -53,20 +53,20 @@ public class Validations {
         }
         if (!validatePhone(tfPhone.getText())) {
             ShowErrorAlert("Error","Neplatné telefoní číslo !!!");
-            return;
+
         }
         if (!validateEmail(tfEmail.getText())) {
             ShowErrorAlert("Error","Neplatný email !!!");
-            return;
+
         }
         if (rdCz.isSelected()){
             if (!validateCzechBirthNumberSyntax(tfPersonIdNumber.getText())) {
                 ShowErrorAlert("Error","Neplatná syntaxe českého rodného čísla !!! \nPlatné je např.: 580123/1158, nebo 5801231158");
-                return;
+
             }else {
                 if (!validateCzechBirthNumberValue(tfPersonIdNumber.getText())){
                     ShowErrorAlert("Error","Neplatné české rodné číslo !!! \nPlatné je např.: 580123/1158");
-                    return;
+
                 }
                 if (!tfPersonIdNumber.getText().contains("/")) {
                     tfPersonIdNumber.setText(tfPersonIdNumber.getText().substring(0, 6) + "/" + tfPersonIdNumber.getText().substring(6));

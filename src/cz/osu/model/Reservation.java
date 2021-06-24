@@ -1,4 +1,4 @@
-package cz.osu.database;
+package cz.osu.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 
-public class DatabaseData {
+public class Reservation {
      @JsonProperty("id")
      int id;
      @JsonProperty("firstName")
@@ -33,11 +33,11 @@ public class DatabaseData {
      String nationality;
 
 
-    public DatabaseData() {
+    public Reservation() {
     }
 
-    public DatabaseData(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber,
-                        LocalDate reservationDate, LocalTime reservationTime, String note, String nationality) {
+    public Reservation(int id, String name, String surname, String personIdNumber, String phone, String email, String plateNumber,
+                       LocalDate reservationDate, LocalTime reservationTime, String note, String nationality) {
         this.id = id;
         this.name = name;
         this.surname = surname;

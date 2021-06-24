@@ -1,5 +1,7 @@
 package cz.osu.guiJavaFx;
 
+import cz.osu.utils.Validations;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 

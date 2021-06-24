@@ -1,6 +1,7 @@
-package cz.osu.guiJavaFx;
+package cz.osu.controllers;
 
-import cz.osu.database.DatabaseConnect;
+import cz.osu.utils.RequestUtils;
+import cz.osu.utils.Validations;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,10 +11,6 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
@@ -57,7 +54,7 @@ public class CreateReservationController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //System.out.println("new inicized");
 
-        ObservableList<LocalTime> alreadyListedTimes =  DatabaseConnect.getListOfReservedTimeForSelectedDay(MainWindowController.selectedDate);
+        ObservableList<LocalTime> alreadyListedTimes =  RequestUtils.getListOfReservedTimeForSelectedDay(MainWindowController.selectedDate);
 
         ObservableList<LocalTime> showList = defaultListOfTimes;
         showList.removeAll(alreadyListedTimes);
@@ -75,69 +72,8 @@ public class CreateReservationController implements Initializable {
     public void requestCreateNewReservation(ActionEvent actionEvent) {
             Validations.validateInputs(tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz);
 
-                URL url = null;
-                try {
-                    url = new URL("http://localhost:8080/reservations");
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setRequestMethod("POST");
-                    String date = MainWindowController.selectedDate.toString();
 
-                    String json = "{\n" +
-                            "\"reservationDate\": \"" + MainWindowController.selectedDate+"\",\n" +
-                            "\"reservationTime\": \"" +comBoxReservedTime.getValue()+":00"+"\",\n" +
-                            "\"firstName\": \"" +tfName.getText()+"\",\n" +
-                            "\"lastName\": \"" +tfSurname.getText()+"\",\n" +
-                            "\"plateNumber\": \"" +tfPlateNumber.getText()+"\",\n" +
-                            "\"personIdNumber\": \"" +tfPersonIdNumber.getText()+"\",\n" +
-                            "\"phone\": \"" +tfPhone.getText()+"\",\n" +
-                            "\"email\": \"" +tfEmail.getText()+"\",\n" +
-                            "\"note\": \"" +tfNote.getText().replaceAll("[\r\n]+", " ")+"\",\n" +
-                            "\"nationality\": \"" +(rdCz.isSelected() ? "cz" : "--")+"\"\n" +
-                            "}";
-                    System.out.println( json);
-
-
-                    con.setConnectTimeout(5000);
-                    con.setReadTimeout(5000);
-                    con.setDoOutput(true);
-                    con.setRequestProperty("Content-Type", "application/json");
-                    DataOutputStream out = new DataOutputStream(con.getOutputStream());
-                    //out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-                    out.write(json.getBytes());
-                    out.flush();
-                    out.close();
-
-                    int status = con.getResponseCode();
-                    BufferedReader in = new BufferedReader(
-                            new InputStreamReader(con.getInputStream()));
-                    String inputLine;
-                    StringBuffer content = new StringBuffer();
-                    while ((inputLine = in.readLine()) != null) {
-                        content.append(inputLine);
-                    }
-                    in.close();
-
-                    Reader streamReader = null;
-
-                    if (status > 299) {
-                        streamReader = new InputStreamReader(con.getErrorStream());
-                    } else {
-                        streamReader = new InputStreamReader(con.getInputStream());
-                    }
-
-                    con.disconnect();
-
-
-
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (ProtocolException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
+                RequestUtils.requestCreateNewReservation(tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz, tfNote);
 
 
                 Stage stage = (Stage) btnClose.getScene().getWindow();
@@ -151,7 +87,7 @@ public class CreateReservationController implements Initializable {
     public void reloadDate() {
         System.out.println("reload");
 
-        ObservableList<LocalTime> todayListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(MainWindowController.selectedDate);
+        ObservableList<LocalTime> todayListedTimes = RequestUtils.getListOfReservedTimeForSelectedDay(MainWindowController.selectedDate);
         System.out.println(todayListedTimes);
 
 

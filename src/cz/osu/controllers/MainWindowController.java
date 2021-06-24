@@ -1,7 +1,7 @@
-package cz.osu.guiJavaFx;
+package cz.osu.controllers;
 
-import cz.osu.database.DatabaseConnect;
-import cz.osu.database.DatabaseData;
+import cz.osu.model.Reservation;
+import cz.osu.utils.RequestUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -33,29 +33,29 @@ import javafx.stage.Stage;
 
 public class MainWindowController implements Initializable {
     @FXML
-    private javafx.scene.control.TableView<DatabaseData> tableView;
+    private javafx.scene.control.TableView<Reservation> tableView;
     @FXML
-    private TableColumn<DatabaseData, Integer> colId;
+    private TableColumn<Reservation, Integer> colId;
     @FXML
-    private TableColumn<DatabaseData, String> colName;
+    private TableColumn<Reservation, String> colName;
     @FXML
-    private TableColumn<DatabaseData, String> colSurname;
+    private TableColumn<Reservation, String> colSurname;
     @FXML
-    private TableColumn<DatabaseData, String> colPersonIdNumber;
+    private TableColumn<Reservation, String> colPersonIdNumber;
     @FXML
-    private TableColumn<DatabaseData, String> colPhone;
+    private TableColumn<Reservation, String> colPhone;
     @FXML
-    private TableColumn<DatabaseData, String> colEmail;
+    private TableColumn<Reservation, String> colEmail;
     @FXML
-    private TableColumn<DatabaseData, String> colPlateNumber;
+    private TableColumn<Reservation, String> colPlateNumber;
     @FXML
-    private TableColumn<DatabaseData, Timestamp> colReservationDate;
+    private TableColumn<Reservation, Timestamp> colReservationDate;
     @FXML
-    private TableColumn<DatabaseData, Time> colReservationTime;
+    private TableColumn<Reservation, Time> colReservationTime;
     @FXML
-    private TableColumn<DatabaseData, String> colNote;
+    private TableColumn<Reservation, String> colNote;
     @FXML
-    private TableColumn<DatabaseData, String> colNationality;
+    private TableColumn<Reservation, String> colNationality;
 
     @FXML
     private Button btnCreate;
@@ -178,7 +178,7 @@ public class MainWindowController implements Initializable {
 
     public void requestRefresh() {
 
-        ObservableList<DatabaseData> reservationList = DatabaseConnect.getDatabaseDataListForSelectedDay(datePicker.getValue());
+        ObservableList<Reservation> reservationList = RequestUtils.getDatabaseDataListForSelectedDay(datePicker.getValue());
         showData(reservationList);
 
     }
@@ -186,18 +186,18 @@ public class MainWindowController implements Initializable {
 
 
 
-    public void showData(ObservableList<DatabaseData> reservationList) {
+    public void showData(ObservableList<Reservation> reservationList) {
 
-        colId.setCellValueFactory(new PropertyValueFactory<DatabaseData, Integer>("id"));
-        colName.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("name"));
-        colSurname.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("surname"));
-        colPersonIdNumber.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("personIdNumber"));
-        colPhone.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("phone"));
-        colEmail.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("email"));
-        colPlateNumber.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("plateNumber"));
-        colReservationTime.setCellValueFactory(new PropertyValueFactory<DatabaseData, Time>("reservationTime"));
-        colNote.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("note"));
-        colNationality.setCellValueFactory(new PropertyValueFactory<DatabaseData, String>("nationality"));
+        colId.setCellValueFactory(new PropertyValueFactory<Reservation, Integer>("id"));
+        colName.setCellValueFactory(new PropertyValueFactory<Reservation, String>("name"));
+        colSurname.setCellValueFactory(new PropertyValueFactory<Reservation, String>("surname"));
+        colPersonIdNumber.setCellValueFactory(new PropertyValueFactory<Reservation, String>("personIdNumber"));
+        colPhone.setCellValueFactory(new PropertyValueFactory<Reservation, String>("phone"));
+        colEmail.setCellValueFactory(new PropertyValueFactory<Reservation, String>("email"));
+        colPlateNumber.setCellValueFactory(new PropertyValueFactory<Reservation, String>("plateNumber"));
+        colReservationTime.setCellValueFactory(new PropertyValueFactory<Reservation, Time>("reservationTime"));
+        colNote.setCellValueFactory(new PropertyValueFactory<Reservation, String>("note"));
+        colNationality.setCellValueFactory(new PropertyValueFactory<Reservation, String>("nationality"));
 
         datePicker.setValue(selectedDate);
 

@@ -1,7 +1,8 @@
-package cz.osu.guiJavaFx;
+package cz.osu.controllers;
 
-import cz.osu.database.DatabaseConnect;
-import cz.osu.database.DatabaseData;
+import cz.osu.model.Reservation;
+import cz.osu.utils.RequestUtils;
+import cz.osu.utils.Validations;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,11 +19,9 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static cz.osu.guiJavaFx.MainWindowController.selectedId;
-import static cz.osu.guiJavaFx.MainWindowController.selectedTime;
+import static cz.osu.controllers.MainWindowController.selectedId;
+import static cz.osu.controllers.MainWindowController.selectedTime;
 
 public class EditReservationController implements Initializable {
     @FXML
@@ -77,7 +76,7 @@ public class EditReservationController implements Initializable {
 
 
 
-        todaysListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(datePicker.getValue());
+        todaysListedTimes = RequestUtils.getListOfReservedTimeForSelectedDay(datePicker.getValue());
 
         //    System.out.println(todaysListedTimes);
 
@@ -85,7 +84,7 @@ public class EditReservationController implements Initializable {
         listedTimes.addAll(todaysListedTimes);
         listedTimes.remove(selectedTime);
 
-        DatabaseData data = DatabaseConnect.getSelectedDatabaseDataById(selectedId);
+        Reservation data = RequestUtils.getSelectedDatabaseDataById(selectedId);
 
         tfName.setText(data.getName());
         tfSurname.setText(data.getSurname());
@@ -113,60 +112,8 @@ public class EditReservationController implements Initializable {
     public void requestEditReservation(ActionEvent actionEvent) {
         Validations.validateInputs(tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz);
 
-            URL url = null;
-            try {
-                url = new URL("http://localhost:8080/reservations/" + selectedId);
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setRequestMethod("PUT");
+            RequestUtils.requestEditReservation(datePicker, tfName,  tfSurname, tfPersonIdNumber,  tfPlateNumber,  tfPhone,  tfEmail,  comBoxReservedTime,  rdCz, tfNote);
 
-
-                String json = "{\n" +
-                        "\"reservationDate\": \"" + datePicker.getValue() + "\",\n" +
-                        "\"reservationTime\": \"" + comBoxReservedTime.getValue() + ":00" + "\",\n" +
-                        "\"firstName\": \"" + tfName.getText() + "\",\n" +
-                        "\"lastName\": \"" + tfSurname.getText() + "\",\n" +
-                        "\"plateNumber\": \"" + tfPlateNumber.getText() + "\",\n" +
-                        "\"personIdNumber\": \"" + tfPersonIdNumber.getText() + "\",\n" +
-                        "\"phone\": \"" + tfPhone.getText() + "\",\n" +
-                        "\"email\": \"" + tfEmail.getText() + "\",\n" +
-                        "\"note\": \"" + tfNote.getText().replaceAll("[\r\n]+", " ") + "\",\n" +
-                        "\"nationality\": \"" + (rdCz.isSelected() ? "cz" : "--") + "\"\n" +
-                        "}";
-                System.out.println(json);
-
-
-                con.setConnectTimeout(5000);
-                con.setReadTimeout(5000);
-                con.setDoOutput(true);
-                con.setRequestProperty("Content-Type", "application/json");
-                DataOutputStream out = new DataOutputStream(con.getOutputStream());
-                //out.writeBytes(ParameterStringBuilder.getParamsString(parameters));
-                out.write(json.getBytes());
-                out.flush();
-                out.close();
-
-                int status = con.getResponseCode();
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(con.getInputStream()));
-                String inputLine;
-                StringBuffer content = new StringBuffer();
-                while ((inputLine = in.readLine()) != null) {
-                    content.append(inputLine);
-                }
-                in.close();
-
-
-
-                con.disconnect();
-
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
 
             Stage stage = (Stage) btnClose.getScene().getWindow();
@@ -185,7 +132,7 @@ public class EditReservationController implements Initializable {
         System.out.println("reload");
         MainWindowController.selectedDate=datePicker.getValue();
         System.out.println(datePicker.getValue());
-        ObservableList<LocalTime> todayListedTimes = DatabaseConnect.getListOfReservedTimeForSelectedDay(datePicker.getValue());
+        ObservableList<LocalTime> todayListedTimes = RequestUtils.getListOfReservedTimeForSelectedDay(datePicker.getValue());
         System.out.println(todayListedTimes);
 
         ObservableList<LocalTime> showListOfAvailableTimes = FXCollections.observableArrayList(LocalTime.of(7, 0), LocalTime.of(8, 0),

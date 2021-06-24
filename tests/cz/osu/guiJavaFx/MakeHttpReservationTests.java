@@ -1,7 +1,7 @@
 package cz.osu.guiJavaFx;
 
-import cz.osu.database.DatabaseConnect;
-import cz.osu.database.DatabaseData;
+import cz.osu.utils.RequestUtils;
+import cz.osu.model.Reservation;
 import javafx.collections.ObservableList;
 import org.junit.jupiter.api.Assertions;
 
@@ -289,12 +289,12 @@ public class MakeHttpReservationTests {
     }
 
     private boolean delete(LocalDate date, LocalTime lt) throws IOException {
-        DatabaseData dd = null;
-        ObservableList<DatabaseData> reservationList = DatabaseConnect.getDatabaseDataListForSelectedDay(date);
-        for (DatabaseData databaseData : reservationList) {
-            System.out.println(databaseData);
-            if (databaseData.getReservationTime()==lt){
-                dd = databaseData;
+        Reservation dd = null;
+        ObservableList<Reservation> reservationList = RequestUtils.getDatabaseDataListForSelectedDay(date);
+        for (Reservation reservation : reservationList) {
+            System.out.println(reservation);
+            if (reservation.getReservationTime()==lt){
+                dd = reservation;
                 break;
             }
         }
